@@ -24,6 +24,8 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
+from slow_wave.stream.schema import StreamGenConfig
+
 
 class ModelConfig(BaseModel):
     """LLM sampling configuration for agent reasoning and dream summarization."""
@@ -87,6 +89,7 @@ class Config(BaseModel):
     embedding: EmbeddingConfig = Field(default_factory=EmbeddingConfig)
     sim_time: SimTimeConfig = Field(default_factory=SimTimeConfig)
     smoke: SmokeConfig = Field(default_factory=SmokeConfig)
+    stream: StreamGenConfig | None = None  # Phase 1: synthetic stream generation params
     hyperparameters: dict[str, Any] = Field(default_factory=dict)
     search_ranges: dict[str, Any] = Field(default_factory=dict)
     output_dir: str = "runs"

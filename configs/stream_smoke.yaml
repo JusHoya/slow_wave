@@ -1,0 +1,41 @@
+# Phase 1 synthetic stream smoke config.
+#
+# Canonical one-command stream emission:
+#   python -m slow_wave.stream.emit --config configs/stream_smoke.yaml
+# (also wrapped by the Makefile `repro-stream` target).
+#
+# Deterministic by construction: given this config + seed, every emitted artifact
+# (stream.json, datasheet.json, probes.json, accuracy_matrix.json) is
+# byte-identical across runs and platforms (Phase 1 exit criterion #1). It uses
+# no LLM and no heavy ML deps — pure numpy + stdlib.
+#
+# contradiction_rate is 0.0 so the probe set is stable and the oracle accuracy
+# matrix R[i,j] is the crisp lower-triangular-ones skeleton (exit criterion #6).
+# Signal items/task (label_mix.signal * items_per_task = 12) must not exceed the
+# probed key space (n_subjects_per_task * n_attributes = 32) when
+# contradiction_rate is 0.0 — keep that invariant when editing.
+
+experiment: stream-smoke
+description: Phase 1 dependency-free synthetic continual task stream (task-incremental).
+seed: 7
+
+stream:
+  scenario: task-incremental
+  n_tasks: 4
+  items_per_task: 30
+  label_mix:
+    signal: 0.4
+    distractor: 0.4
+    noise: 0.2
+  contradiction_rate: 0.0
+  drift: 0.0
+  recency_bias: 0.0
+  n_subjects_per_task: 10
+  n_attributes: 4
+  n_values: 12
+  probes_per_task: 6
+  distractor_namespace_size: 64
+  noise_vocab_size: 128
+  noise_tokens: 8
+
+output_dir: runs

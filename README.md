@@ -12,13 +12,22 @@ relevance** so the effect can be measured falsifiably. The bench generates the
 data a final scientific paper reports. See [`PRD.md`](PRD.md) for the full
 vision, requirements, and phased roadmap.
 
-## Status: Phase 0 — Foundations & Reproducibility Scaffolding
+## Status: Phase 1 — Synthetic Continual Task Stream Generator
 
-Phase 0 stands up the repo, configuration, pinned dependencies, the run-manifest
-+ reproducibility harness, CI, and a one-command "hello-bench" smoke run that
-exercises a Claude call plus a local embedding and writes a manifest. The
-authoritative cross-module interface spec for this phase is
-[`docs/PHASE0_CONTRACT.md`](docs/PHASE0_CONTRACT.md).
+Phase 0 stood up the repo, configuration, pinned dependencies, the run-manifest
++ reproducibility harness, CI, and a one-command "hello-bench" smoke run
+([`docs/PHASE0_CONTRACT.md`](docs/PHASE0_CONTRACT.md)).
+
+Phase 1 builds the measurement substrate: a deterministic **synthetic continual
+task stream generator** that emits labeled streams with ground-truth relevance
+(`signal`/`distractor`/`noise`), controllable distractor regimes, temporal
+structure and contradictions, an explicit continual-learning scenario tag
+(task/domain/class-incremental), a Gebru et al. (2021) **datasheet**, and a
+held-out **probe set** that computes the `R[i,j]` accuracy matrix against a
+trivial oracle. A **confound guard** (FR1.6) enforces — and proves by test —
+that ground-truth labels can never reach an online retrieval/priority code path.
+The authoritative cross-module interface spec is
+[`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md).
 
 ## Repository layout
 
@@ -58,6 +67,21 @@ make repro-smoke
 ```
 
 The smoke run writes a manifest to `runs/smoke/manifest.json`.
+
+### Emit a synthetic continual task stream (Phase 1)
+
+```bash
+# Deterministic; no LLM and no heavy ML deps required
+python -m slow_wave.stream.emit --config configs/stream_smoke.yaml
+# or, with POSIX make:
+make repro-stream
+```
+
+This writes four byte-reproducible artifacts under `runs/stream/`:
+`stream.json` (online-safe items + an offline-only label sidecar),
+`datasheet.json` (Gebru et al. 2021), `probes.json` (held-out queries + known
+answers), and `accuracy_matrix.json` (the `R[i,j]` skeleton vs. the trivial
+oracle). Given the same config + seed, every file is byte-identical across runs.
 
 ### LLM: real call vs. deterministic mock
 
