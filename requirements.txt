@@ -1,0 +1,14 @@
+# Slow Wave — Phase 0 core runtime + test dependencies (pinned).
+#
+# This file together with `pip install -e .` reproduces a green-pytest
+# environment WITHOUT any heavy ML dependencies. Heavy/optional deps
+# (sentence-transformers, torch, scipy, statsmodels, rliable, matplotlib,
+# seaborn, faiss-cpu) live in pyproject.toml extras and requirements-optional.txt
+# and are only needed for Phases >= 1.
+#
+# Usage:  pip install -r requirements.txt  &&  pip install -e .
+pydantic==2.13.4
+pyyaml==6.0.3
+numpy>=2.1,<3
+anthropic==0.112.0
+pytest==9.1.1

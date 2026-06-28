@@ -1,0 +1,38 @@
+# Phase 0 "hello-bench" smoke config.
+#
+# This is the canonical smoke experiment exercised by:
+#   python -m slow_wave.repro.smoke --config configs/smoke.yaml
+# (also wrapped by the Makefile `repro-smoke` target).
+#
+# It deliberately uses the `hash` embedding backend, which is dependency-free
+# and deterministic, so the smoke run goes green on any machine without
+# installing sentence-transformers / torch. Keep this config cheap and stable:
+# its non-LLM outputs (embeddings, sampling order) must be reproducible
+# bit-for-bit across runs and platforms.
+
+experiment: hello-bench-smoke
+description: Phase 0 dependency-free smoke run exercising a (mocked) Claude call plus a hash embedding.
+seed: 7
+
+model:
+  id: claude-opus-4-8
+  temperature: 0.0
+  max_tokens: 64
+
+embedding:
+  backend: hash          # dependency-free, deterministic bag-of-words hashing
+  model: hash-bow-v1
+  dim: 384
+
+sim_time:
+  compression_factor: 60.0
+
+smoke:
+  prompt: "In one sentence, state what memory consolidation is."
+  n_items: 8
+
+hyperparameters:
+  replay_batch: 4
+  downscale_factor: 0.95
+
+search_ranges: {}

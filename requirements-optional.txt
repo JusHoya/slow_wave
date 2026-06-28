@@ -1,0 +1,25 @@
+# Slow Wave — heavy / optional dependencies for Phases >= 1.
+#
+# These are NOT required for Phase 0 CI, which stays green and fast without
+# them. The Phase 0 smoke run defaults to the dependency-free `hash` embedding
+# backend and the mock LLM path, so none of the packages below are imported.
+#
+# Install everything here with:   pip install -r requirements-optional.txt
+# Or selectively via extras, e.g.: pip install -e ".[embeddings,stats]"
+#                                   pip install -e ".[all]"
+
+# embeddings (Phase 1+): local sentence embeddings for the memory substrate.
+sentence-transformers>=3.0
+torch>=2.2
+
+# stats (Phase 4+): bootstrap CIs, rliable robust aggregates, significance tests.
+scipy>=1.13
+statsmodels>=0.14
+rliable>=1.2.0
+
+# viz (Phase 5+): publication-grade, colorblind-safe figures.
+matplotlib>=3.8
+seaborn>=0.13
+
+# vector index (Phase 2+): in-process approximate nearest neighbor search.
+faiss-cpu>=1.8
