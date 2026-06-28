@@ -1,0 +1,39 @@
+# Phase 0 "real run" config template.
+#
+# This mirrors configs/smoke.yaml but swaps the dependency-free hash embedding
+# for the real local sentence-transformers backend (BAAI/bge-small-en-v1.5,
+# dim 384) and restores the default Opus 4.8 max_tokens budget.
+#
+# The sentence-transformers backend requires the optional extra:
+#   pip install -e ".[embeddings]"
+# If sentence-transformers / torch are unavailable at runtime, the embedder
+# falls back to the hash backend (recorded in the run manifest).
+#
+# Copy this file per experiment and edit the fields you need.
+
+experiment: hello-bench-default
+description: Phase 0 real-run template using local sentence-transformers embeddings.
+seed: 7
+
+model:
+  id: claude-opus-4-8
+  temperature: 0.0
+  max_tokens: 256
+
+embedding:
+  backend: sentence-transformers
+  model: BAAI/bge-small-en-v1.5
+  dim: 384
+
+sim_time:
+  compression_factor: 60.0
+
+smoke:
+  prompt: "In one sentence, state what memory consolidation is."
+  n_items: 8
+
+hyperparameters:
+  replay_batch: 4
+  downscale_factor: 0.95
+
+search_ranges: {}
