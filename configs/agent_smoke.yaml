@@ -1,0 +1,61 @@
+# Phase 2 no-sleep wake-agent smoke config.
+#
+# Canonical one-command baseline run:
+#   python -m slow_wave.agent.runner --config configs/agent_smoke.yaml
+# (also wrapped by the Makefile `repro-agent` target).
+#
+# Small, deterministic, dependency-free (hash embeddings + mock LLM). With an
+# UNBOUNDED episodic store (episodic_capacity: 0) and contradiction_rate 0.0 the
+# baseline retains everything, so the accuracy matrix R[i,j] is the crisp
+# lower-triangular-ones skeleton (ACC=1, BWT=0) — the clean end-to-end check for
+# Phase 2 exit criterion #1 (runs end-to-end, writes R + cost telemetry to a
+# manifest). See configs/agent_forgetting.yaml for the bounded, forgetting run.
+
+experiment: agent-smoke
+description: Phase 2 no-sleep wake agent — unbounded baseline (clean R[i,j]) over a task-incremental stream.
+seed: 7
+
+model:
+  id: claude-opus-4-8
+  temperature: 0.0
+  max_tokens: 64
+
+embedding:
+  backend: hash          # dependency-free, deterministic
+  model: hash-bow-v1
+  dim: 384
+
+sim_time:
+  compression_factor: 60.0
+
+stream:
+  scenario: task-incremental
+  n_tasks: 3
+  items_per_task: 12
+  label_mix:
+    signal: 0.5
+    distractor: 0.3
+    noise: 0.2
+  contradiction_rate: 0.0
+  drift: 0.0
+  recency_bias: 0.0
+  n_subjects_per_task: 6
+  n_attributes: 2
+  n_values: 12
+  probes_per_task: 4
+  distractor_namespace_size: 64
+  noise_vocab_size: 128
+  noise_tokens: 8
+
+memory:
+  episodic_capacity: 0   # 0 = unbounded: the clean no-forgetting baseline
+  archival_enabled: true
+  retrieval_policy: recency_importance_relevance
+  retrieval_top_k: 10
+  recency_half_life: 64.0
+
+agent:
+  token_budget: null
+  reasoning_calls: per_task   # exercises the (mock) Claude call + token telemetry
+
+output_dir: runs

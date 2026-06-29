@@ -126,6 +126,12 @@ class Manifest(BaseModel):
     deterministic_probe: dict = Field(default_factory=dict)
     llm: dict = Field(default_factory=dict)
     nondeterministic_fields: list[str] = Field(default_factory=list)
+    results: dict = Field(default_factory=dict)
+    """Optional, free-form results payload (added in Phase 2). Carries a run's
+    output artifacts — e.g. the accuracy matrix ``R[i,j]``, continual-learning
+    metrics, and memory-footprint/telemetry — alongside the FR6.1 provenance
+    fields. Empty for Phase 0/1 manifests, so this addition is backward
+    compatible with every existing manifest."""
 
 
 # Fields that may legitimately differ between two runs of the same config+seeds.
@@ -143,6 +149,11 @@ NONDETERMINISTIC_FIELDS: list[str] = [
     "llm.output_tokens",
     "git.commit",
     "git.dirty",
+    # Phase 2 agent telemetry derived from wall-clock timing (varies run-to-run);
+    # the load-bearing reproducible outputs live in ``deterministic_probe`` and
+    # the rest of ``results`` (R[i,j], footprint, counts, metrics).
+    "results.telemetry.step_latencies_s",
+    "results.telemetry.p95_latency_s",
 ]
 
 
@@ -157,6 +168,8 @@ def new_manifest(
     git: dict | None = None,
     run_id: str | None = None,
     created_at: str | None = None,
+    api_calls: int = 1,
+    results: dict | None = None,
 ) -> Manifest:
     """Assemble a :class:`Manifest` from a config, embedder, LLM result, etc.
 
@@ -180,6 +193,12 @@ def new_manifest(
             derived from ``cfg.experiment`` + the config content hash.
         created_at: Optional explicit ISO8601 UTC timestamp; if ``None``, the
             current UTC time is used.
+        api_calls: Number of LLM API calls the run made (default ``1`` for the
+            single-call Phase 0 smoke). Multi-call runs (e.g. the Phase 2 wake
+            agent) pass the accumulated count; recorded at ``cost.api_calls``.
+        results: Optional free-form results payload (Phase 2+) recorded at
+            ``results`` — e.g. the accuracy matrix, continual-learning metrics,
+            and memory footprint. ``None`` leaves ``results`` an empty dict.
 
     Returns:
         A fully-populated :class:`Manifest`.
@@ -218,7 +237,7 @@ def new_manifest(
         output=output_tokens,
         total=input_tokens + output_tokens,
     )
-    cost = CostInfo(wall_clock_s=wall_clock_s, tokens=tokens, api_calls=1)
+    cost = CostInfo(wall_clock_s=wall_clock_s, tokens=tokens, api_calls=api_calls)
 
     llm_block = {
         "model_id": llm.model_id,
@@ -260,6 +279,7 @@ def new_manifest(
         deterministic_probe=dict(deterministic_probe),
         llm=llm_block,
         nondeterministic_fields=list(NONDETERMINISTIC_FIELDS),
+        results=dict(results) if results is not None else {},
     )
 
 

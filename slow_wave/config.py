@@ -72,6 +72,81 @@ class SmokeConfig(BaseModel):
     texts: list[str] | None = None  # if None, smoke generates a deterministic corpus from n_items
 
 
+class MemoryConfig(BaseModel):
+    """Phase 2 memory-substrate configuration (FR2.x).
+
+    Controls the dual-store memory substrate the wake agent writes to and reads
+    from: episodic-buffer capacity (and thus eviction/forgetting pressure), the
+    baseline retrieval policy and its recency/importance/relevance weights, and
+    the recency decay used by both salience and eviction. ``extra="forbid"`` so a
+    typo'd knob fails loudly at load time.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    episodic_capacity: int = Field(default=0, ge=0)
+    """Max live entries in the EPISODIC store; ``0`` means unbounded (no
+    eviction). A finite capacity below the stream's signal count is what makes
+    the no-sleep baseline forget (Phase 2 exit criterion #6)."""
+
+    archival_enabled: bool = True
+    """When ``True`` (default), evicted entries are *demoted* to the auditable
+    archival tier rather than discarded (FR2.4)."""
+
+    retrieval_policy: str = "recency_importance_relevance"
+    """Name of the registered retrieval policy (FR2.3; pluggable via the
+    ``slow_wave.memory.retrieval`` registry)."""
+
+    retrieval_top_k: int = Field(default=8, ge=1)
+    """Number of entries the retrieval policy returns per query."""
+
+    recency_half_life: float = Field(default=64.0, gt=0.0)
+    """Half-life (in stream-item units) of the recency decay applied to salience
+    and eviction priority."""
+
+    weight_recency: float = Field(default=1.0, ge=0.0)
+    weight_importance: float = Field(default=1.0, ge=0.0)
+    weight_relevance: float = Field(default=1.0, ge=0.0)
+    """Multiplicative weights for the recency × importance × relevance baseline
+    retrieval score (Park et al. 2023 memory-stream policy)."""
+
+    base_salience: float = Field(default=1.0, gt=0.0)
+    """Initial importance assigned to a freshly ingested episodic entry."""
+
+    novelty_enabled: bool = True
+    """Whether to compute a novelty term (embedding distance to the consolidated
+    semantic store) into salience (FR2.2)."""
+
+
+class AgentConfig(BaseModel):
+    """Phase 2 wake-agent configuration (FR3.x).
+
+    Controls the no-sleep wake loop: the optional token-budget ceiling the agent
+    self-moderates against (and the harness enforces), whether a Claude reasoning
+    call is made per task segment, and the top-k used when answering held-out
+    probes. ``extra="forbid"`` so a typo'd knob fails loudly at load time.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    token_budget: int | None = None
+    """Ceiling on total (input+output) LLM tokens for the whole run; ``None``
+    means unbounded. Reasoning calls that would exceed it are skipped and logged
+    (FR3.3, DX2)."""
+
+    reasoning_calls: Literal["off", "per_task"] = "per_task"
+    """Whether the wake loop makes a (mock-by-default) Claude reasoning call once
+    per task segment (``"per_task"``) or never (``"off"``). Reasoning never
+    writes the semantic store — writes are gated to sleep (FR3.1)."""
+
+    reasoning_prompt: str = (
+        "Review the recent observations and note any facts worth remembering."
+    )
+    """Prompt used for the per-task reasoning call (telemetry/realism only; it
+    does not determine probe answers, which are read deterministically from
+    memory by exact-key lookup over the active stores)."""
+
+
 class Config(BaseModel):
     """Top-level experiment configuration.
 
@@ -90,6 +165,8 @@ class Config(BaseModel):
     sim_time: SimTimeConfig = Field(default_factory=SimTimeConfig)
     smoke: SmokeConfig = Field(default_factory=SmokeConfig)
     stream: StreamGenConfig | None = None  # Phase 1: synthetic stream generation params
+    memory: MemoryConfig = Field(default_factory=MemoryConfig)  # Phase 2: memory substrate
+    agent: AgentConfig = Field(default_factory=AgentConfig)  # Phase 2: wake agent
     hyperparameters: dict[str, Any] = Field(default_factory=dict)
     search_ranges: dict[str, Any] = Field(default_factory=dict)
     output_dir: str = "runs"
