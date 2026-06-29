@@ -12,7 +12,7 @@ relevance** so the effect can be measured falsifiably. The bench generates the
 data a final scientific paper reports. See [`PRD.md`](PRD.md) for the full
 vision, requirements, and phased roadmap.
 
-## Status: Phase 2 — Memory Substrate + Baseline (No-Sleep) Wake Agent
+## Status: Phase 3 — The Dream Engine (four ablatable operators)
 
 Phase 0 stood up the repo, configuration, pinned dependencies, the run-manifest
 + reproducibility harness, CI, and a one-command "hello-bench" smoke run
@@ -28,6 +28,20 @@ trivial oracle. A **confound guard** (FR1.6) enforces — and proves by test —
 that ground-truth labels can never reach an online retrieval/priority code path.
 The authoritative cross-module interface spec is
 [`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md).
+
+Phase 3 adds the **dream engine**: four independently-ablatable operators run in
+a two-phase (NREM→REM) cycle at scheduled sleep windows. **REPLAY** re-samples
+recent episodics (uniform or prioritized, with importance-sampling weights
+logged); **TRANSFER** distills sampled episodics into durable **semantic** entries
+(preserving the structured fact + provenance) and enforces removable **CLS
+interleaving**; **DOWNSCALE** applies a swappable decay curve (exponential /
+Weibull / ACT-R) to all salience and re-potentiates only replayed items
+("decay all, protect signal"); **GENERATIVE-AUGMENT** synthesizes pseudo-episodes
+and logs a generator-fidelity/drift score. An optional conflict/unlearning step
+demotes contradictions (never deletes). Each operator is a config toggle (all 2⁴
+combinations run), consolidation is **gated to sleep** (no semantic writes during
+wake), and a full cycle leaves the provenance + archival audit intact. The
+authoritative interface spec is [`docs/PHASE3_CONTRACT.md`](docs/PHASE3_CONTRACT.md).
 
 Phase 2 adds the **dual-store memory substrate** and the **no-sleep wake agent**
 — the catastrophic-forgetting reference the whole study is measured against. The
@@ -117,6 +131,29 @@ unbounded store (clean lower-triangular `R`, BWT≈0); `agent_forgetting.yaml`
 bounds the episodic store so older tasks are evicted (demoted to the archival
 tier) and backward transfer goes clearly negative.
 
+### Run the dream engine (Phase 3)
+
+```bash
+# Deterministic; hash embeddings + mock LLM by default (no key / heavy deps needed)
+python -m slow_wave.dream.runner --config configs/dream_smoke.yaml
+# or, with POSIX make:
+make repro-dream
+
+# The "full-dream" treatment over the forgetting stream:
+python -m slow_wave.dream.runner --config configs/dream_full.yaml
+```
+
+This runs the same Phase 1 stream through the wake loop but attaches the dream
+engine at each scheduled **sleep window**, then writes `runs/dream/manifest.json`
+carrying `R[i,j]`, the continual-learning metrics, the per-tier footprint, **both**
+wake and dream telemetry (per-cycle operator logs, replay/IS weights, transfer
+counts, generator-fidelity/drift), and a **provenance + archival audit**. On the
+same bounded, noisy stream where the no-sleep baseline strongly forgets,
+consolidation transfers sampled signal facts into the (unbounded) semantic store
+so they survive episodic eviction — measurably reducing backward transfer. (Whether
+dreaming beats the baseline at *matched budget* is a Phase 4/5 question, not
+asserted here.)
+
 ### LLM: real call vs. deterministic mock
 
 The smoke run makes a **real Claude API call when `ANTHROPIC_API_KEY` is set**
@@ -142,4 +179,5 @@ pip install -r requirements-optional.txt
 - Phase 0 interface contract: [`docs/PHASE0_CONTRACT.md`](docs/PHASE0_CONTRACT.md)
 - Phase 1 interface contract: [`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md)
 - Phase 2 interface contract: [`docs/PHASE2_CONTRACT.md`](docs/PHASE2_CONTRACT.md)
+- Phase 3 interface contract: [`docs/PHASE3_CONTRACT.md`](docs/PHASE3_CONTRACT.md)
 - Product requirements & roadmap: [`PRD.md`](PRD.md)

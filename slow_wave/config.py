@@ -147,6 +147,112 @@ class AgentConfig(BaseModel):
     memory by exact-key lookup over the active stores)."""
 
 
+class DreamConfig(BaseModel):
+    """Phase 3 dream-engine configuration (FR4.x).
+
+    Controls the offline, two-phase (NREM-like -> REM-like) "dream" cycle that
+    consolidates wake experience. Every one of the four operators is an
+    independent on/off toggle (Phase 3 exit criterion #1, the 2^4 ablation
+    matrix), so the engine instantiates and runs for any subset; ``conflict`` is
+    the optional fifth operator (FR4.7). ``extra="forbid"`` so a typo'd knob
+    fails loudly at load time.
+
+    The dream cycle is **gated to scheduled sleep windows** (FR4.5): semantic
+    writes occur *only* inside a cycle, never during wake ingest. With
+    :attr:`enabled` ``False`` (the default) the engine never runs and the agent is
+    byte-identical to the Phase 2 no-sleep baseline.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    enabled: bool = False
+    """Master toggle. ``False`` (default) => no dream cycle ever runs (the Phase 2
+    no-sleep baseline). ``True`` => the engine runs at scheduled sleep windows."""
+
+    # -- Operator toggles (EC1: the 2^4 replay x transfer x downscale x augment
+    #    matrix; conflict is the optional FR4.7 fifth operator). ------------- #
+    replay_enabled: bool = True
+    """REPLAY operator (FR4.1): re-sample recent episodics for the cycle."""
+    transfer_enabled: bool = True
+    """TRANSFER operator (FR4.2): consolidate sampled episodics into semantic."""
+    downscale_enabled: bool = True
+    """DOWNSCALE operator (FR4.3): global salience decay + replay re-potentiation."""
+    augment_enabled: bool = True
+    """GENERATIVE-AUGMENT operator (FR4.4, REM-like): synthesize pseudo-episodes."""
+    conflict_enabled: bool = False
+    """Optional conflict/unlearning step (FR4.7): demote contradicting entries."""
+
+    # -- Scheduling & gating (FR4.5) / sleep-pressure controller (FR4.6) ----- #
+    sleep_every_n_tasks: int = Field(default=1, ge=1)
+    """Run a dream cycle at the end of every ``N`` task segments (fixed schedule;
+    FR4.5). The sleep window is the only place semantic writes happen."""
+    sleep_pressure_mode: Literal["fixed", "adaptive"] = "fixed"
+    """``"fixed"`` => cycle every :attr:`sleep_every_n_tasks` tasks. ``"adaptive"``
+    => additionally trigger a cycle once accumulated wake "memory churn" (items
+    ingested since the last cycle) exceeds :attr:`sleep_pressure_churn_threshold`
+    (SWA-homeostasis analogue, FR4.6)."""
+    sleep_pressure_churn_threshold: int = Field(default=0, ge=0)
+    """Churn (items since last cycle) that triggers an adaptive cycle; ``0`` =>
+    disabled (adaptive mode then behaves like fixed). Ignored when
+    :attr:`sleep_pressure_mode` is ``"fixed"``."""
+
+    # -- REPLAY (FR4.1) ----------------------------------------------------- #
+    replay_sample_size: int = Field(default=16, ge=0)
+    """Number of recent episodics sampled per cycle (the "ripple" batch). When the
+    candidate pool exceeds this, the surplus is logged as dropped (DX2)."""
+    replay_strategy: Literal["uniform", "prioritized"] = "prioritized"
+    """``"uniform"`` (DQN baseline; Mnih et al. 2015) or ``"prioritized"``
+    (recency x relevance x novelty x surprise; Schaul et al. 2016, IS weights
+    logged)."""
+    replay_priority_alpha: float = Field(default=1.0, ge=0.0)
+    """Prioritization exponent (0 => uniform even under ``"prioritized"``)."""
+    replay_priority_eps: float = Field(default=1e-6, gt=0.0)
+    """Small constant added to every priority so no entry has zero sample mass."""
+
+    # -- TRANSFER (FR4.2) --------------------------------------------------- #
+    transfer_batch_size: int = Field(default=8, ge=1)
+    """Episodics distilled per Claude "dream summarization" batch."""
+    cls_interleave: bool = True
+    """Enforce CLS interleaving (FR4.2/EC4): each batch mixes new episodics with
+    sampled prior consolidated memories. ``False`` is the on-purpose
+    catastrophic-interference condition (no interleaving)."""
+    cls_interleave_ratio: float = Field(default=0.5, ge=0.0, le=1.0)
+    """Target fraction of each transfer batch drawn from prior consolidated
+    (semantic) memory when :attr:`cls_interleave` is on."""
+    transfer_max_calls: int | None = None
+    """Optional ceiling on Claude calls per cycle for TRANSFER; ``None`` =>
+    unbounded. Any batch skipped by the ceiling is logged (DX2)."""
+
+    # -- DOWNSCALE (FR4.3) + swappable decay (EC6) -------------------------- #
+    decay_function: Literal["exponential", "weibull", "act_r"] = "exponential"
+    """Which swappable decay curve DOWNSCALE applies (EC6)."""
+    repotentiate_boost: float = Field(default=1.5, ge=1.0)
+    """Multiplicative boost applied to a replayed item's salience after global
+    decay ("protect signal"); ``>= 1`` so a replayed item ends strictly above an
+    identical non-replayed one (EC2)."""
+    decay_exponential_rate: float = Field(default=0.1, gt=0.0)
+    """``exponential`` decay rate: factor = ``exp(-rate * age)``."""
+    decay_weibull_scale: float = Field(default=10.0, gt=0.0)
+    decay_weibull_k: float = Field(default=1.5, gt=0.0)
+    """``weibull`` decay: factor = ``exp(-(age/scale)**k)``."""
+    decay_act_r: float = Field(default=0.5, gt=0.0)
+    """``act_r`` base-level decay: factor = ``(1 + age) ** (-d)``."""
+
+    # -- GENERATIVE-AUGMENT (FR4.4) ----------------------------------------- #
+    augment_per_cycle: int = Field(default=4, ge=0)
+    """Number of pseudo-episodes synthesized per cycle (REM-like)."""
+    augment_kinds: list[str] = Field(
+        default_factory=lambda: ["paraphrase", "abstraction", "counterfactual"]
+    )
+    """Kinds of pseudo-episode the generator cycles through."""
+
+    # -- CONFLICT / unlearning (FR4.7) -------------------------------------- #
+    conflict_demote_strategy: Literal["older", "lower_salience"] = "older"
+    """When two consolidated entries assert the same key with different values,
+    which one to demote (the ``"older"`` ``created_order``, or the
+    ``"lower_salience"`` one); the survivor is never hard-deleted (FR4.7)."""
+
+
 class Config(BaseModel):
     """Top-level experiment configuration.
 
@@ -167,6 +273,7 @@ class Config(BaseModel):
     stream: StreamGenConfig | None = None  # Phase 1: synthetic stream generation params
     memory: MemoryConfig = Field(default_factory=MemoryConfig)  # Phase 2: memory substrate
     agent: AgentConfig = Field(default_factory=AgentConfig)  # Phase 2: wake agent
+    dream: DreamConfig = Field(default_factory=DreamConfig)  # Phase 3: dream engine
     hyperparameters: dict[str, Any] = Field(default_factory=dict)
     search_ranges: dict[str, Any] = Field(default_factory=dict)
     output_dir: str = "runs"

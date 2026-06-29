@@ -1,0 +1,80 @@
+# Phase 3 "full-dream" config (the treatment arm preview).
+#
+#   python -m slow_wave.dream.runner --config configs/dream_full.yaml
+#
+# This mirrors configs/agent_forgetting.yaml's stream + bounded episodic store
+# (the no-sleep baseline that demonstrably forgets, BWT < 0) but turns the dream
+# engine ON. With consolidation, sampled signal facts are transferred into the
+# SEMANTIC store, which is NOT capacity-bounded, so they survive episodic
+# eviction and stay answerable by exact-key lookup — the mechanism the whole
+# project tests. It is the natural A/B partner to agent_forgetting.yaml and the
+# preview of the Phase 4/5 "full-dream" treatment arm. (Whether dreaming actually
+# beats the baseline at matched budget is a Phase 5 question, not asserted here.)
+
+experiment: dream-full
+description: Phase 3 full-dream treatment over the forgetting stream — consolidation rescues evicted signals into semantic memory.
+seed: 13
+
+model:
+  id: claude-opus-4-8
+  temperature: 0.0
+  max_tokens: 64
+
+embedding:
+  backend: hash
+  model: hash-bow-v1
+  dim: 384
+
+sim_time:
+  compression_factor: 60.0
+
+stream:
+  scenario: task-incremental
+  n_tasks: 4
+  items_per_task: 30
+  label_mix:
+    signal: 0.5
+    distractor: 0.3
+    noise: 0.2
+  contradiction_rate: 0.0
+  drift: 0.0
+  recency_bias: 0.0
+  n_subjects_per_task: 8
+  n_attributes: 4
+  n_values: 12
+  probes_per_task: 6
+  distractor_namespace_size: 64
+  noise_vocab_size: 128
+  noise_tokens: 8
+
+memory:
+  episodic_capacity: 45   # same bound as agent_forgetting.yaml (the baseline forgets)
+  archival_enabled: true
+  retrieval_policy: recency_importance_relevance
+  retrieval_top_k: 16
+  recency_half_life: 64.0
+
+agent:
+  token_budget: null
+  reasoning_calls: per_task
+
+dream:
+  enabled: true
+  replay_enabled: true
+  transfer_enabled: true
+  downscale_enabled: true
+  augment_enabled: true
+  conflict_enabled: false
+  sleep_every_n_tasks: 1
+  sleep_pressure_mode: fixed
+  replay_sample_size: 24
+  replay_strategy: prioritized
+  replay_priority_alpha: 1.0
+  transfer_batch_size: 8
+  cls_interleave: true
+  cls_interleave_ratio: 0.5
+  decay_function: exponential
+  repotentiate_boost: 1.5
+  augment_per_cycle: 4
+
+output_dir: runs

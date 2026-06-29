@@ -86,6 +86,24 @@ class _VectorStore:
         self._vectors.pop(entry_id, None)
         return self._entries.pop(entry_id, None)
 
+    def pop(self, entry_id: str) -> tuple[MemoryEntry | None, np.ndarray | None]:
+        """Remove ``entry_id`` and return its ``(entry, vector)`` (or ``(None, None)``).
+
+        The public removal primitive the dream engine uses to move an active
+        entry out of its store (e.g. conflict/unlearning demotion); the caller is
+        responsible for demoting the returned entry to the archival tier (the
+        substrate's :meth:`MemorySubstrate.demote_entry` does both).
+
+        Args:
+            entry_id: The entry to remove.
+
+        Returns:
+            A ``(entry, vector)`` tuple; ``(None, None)`` if the id is absent.
+        """
+        vec = self._vectors.get(entry_id)
+        entry = self._remove(entry_id)
+        return entry, vec
+
     # -- query surface ----------------------------------------------------- #
     def __len__(self) -> int:
         """Return the number of live entries in the store."""
@@ -503,6 +521,45 @@ class MemorySubstrate:
                     now_order,
                 )
         return evicted
+
+    def demote_entry(
+        self, entry_id: str, *, reason: str, at_order: int
+    ) -> bool:
+        """Demote one active entry (episodic or semantic) to archival (FR4.7).
+
+        The dream-driven counterpart of capacity eviction: removes ``entry_id``
+        from whichever active store holds it and demotes it to the auditable
+        archival tier (demote-not-delete, EC7), or — when
+        :attr:`archival_enabled` is ``False`` — drops it with a logged INFO line
+        (DX2: never drop silently). Episodic is checked before semantic. Used by
+        the conflict/unlearning step to retire a contradicting entry without
+        destroying it.
+
+        Args:
+            entry_id: The active entry to demote.
+            reason: Why it is being demoted (e.g. ``"conflict_unlearning"``).
+            at_order: Stream order at which the demotion happened.
+
+        Returns:
+            ``True`` if an active entry was found and demoted (or dropped);
+            ``False`` if no active store held ``entry_id``.
+        """
+        for store in (self.episodic, self.semantic):
+            if store.get(entry_id) is not None:
+                entry, vec = store.pop(entry_id)
+                if entry is None:  # pragma: no cover - guarded by get() above
+                    return False
+                if self.archival_enabled:
+                    self.archival.demote(entry, vec, reason=reason, at_order=at_order)
+                else:
+                    logger.info(
+                        "dropping demoted entry %s at order %d "
+                        "(archival disabled; not recoverable)",
+                        entry_id,
+                        at_order,
+                    )
+                return True
+        return False
 
     def footprint(self) -> MemoryFootprint:
         """Return the per-tier footprint with ``total_bytes`` summed (EC2)."""
