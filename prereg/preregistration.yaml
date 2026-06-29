@@ -1,0 +1,95 @@
+# Slow Wave — Preregistration (registered-report style; FR5.5, DX3)
+# =================================================================
+# This artifact is committed to git BEFORE any real long-horizon run (Phase 5).
+# The analysis code (slow_wave.eval.prereg) reads the SINGLE primary endpoint
+# named here and REFUSES to compute any other (DX3: falsifiability visible in the
+# code). The committing git hash is recorded out-of-band (the commit that adds
+# this file); it is intentionally left null in the artifact itself so the file
+# content is stable and the hash is the commit that introduced it.
+#
+# Parsed into slow_wave.eval.schema.Preregistration (extra="forbid": every key
+# below is load-bearing).
+
+title: >-
+  Does scheduled, offline, sleep-like memory consolidation improve long-horizon
+  accuracy for frozen-weights LLM agents, at matched budget?
+
+hypothesis_h1: >-
+  At matched LLM-token, retrieval-call, and final-memory-vector budgets, the
+  full four-operator dream cycle (REPLAY + TRANSFER + DOWNSCALE +
+  GENERATIVE-AUGMENT, the `full_dream` arm) yields HIGHER final Average Accuracy
+  (ACC) on the held-out probe set than the no-sleep wake-only baseline
+  (`no_sleep`) on a distractor-heavy continual task stream, with the paired
+  per-seed ACC difference (full_dream - no_sleep) strictly positive and its
+  bootstrap 95% CI excluding zero.
+
+hypothesis_h0: >-
+  At matched budget, full_dream does not improve final ACC over no_sleep: the
+  paired per-seed ACC difference has a bootstrap 95% CI that includes zero, OR
+  the observed effect does not exceed the A/A noise floor.
+
+primary_endpoint: acc_diff_full_dream_vs_no_sleep
+
+primary_endpoint_description: >-
+  The paired difference in final Average Accuracy (ACC = mean of the last row of
+  R[i,j]) between the full_dream treatment arm and the no_sleep baseline arm,
+  paired by seed (each seed fixes both the stream-generation seed and the
+  agent/LLM sampling seed), aggregated as the mean paired difference over seeds.
+  Reported with a bootstrap 95% CI, a paired Wilcoxon signed-rank test, and a
+  standardized paired effect size (Cohen's d) with CI. The effect must also
+  exceed the A/A noise floor (the absolute ACC difference between two seeds of
+  the reference arm) to count as confirmed.
+
+treatment_arm: full_dream
+baseline_arm: no_sleep
+
+seed_plan: >-
+  At least 5 seeds per arm (Phase 4/5 floor; FR5.4). Each seed deterministically
+  derives BOTH the stream-generation seed and the agent/LLM sampling seed via
+  derive_seed, so seed variability captures both stream and sampling sources.
+  Pairing is by seed across arms (a paired design maximizes power per Colas et
+  al. 2018). Phase 5 may increase the seed count if the power analysis below
+  requires it; it may never decrease below 5.
+
+power_analysis: >-
+  Following Colas, Sigaud & Oudeyer (2018): for a paired design the required n
+  scales with (z_{1-alpha/2} + z_{1-beta})^2 / d^2 for standardized effect d. To
+  detect a medium standardized paired effect (d ~ 0.8) at alpha = 0.05
+  (two-sided) with power 0.8 needs ~15 paired seeds; a large effect (d ~ 1.3)
+  needs ~7. We commit to >= 5 as the floor and scale toward >= 15 in Phase 5 if
+  the observed dispersion implies a smaller effect, logging the realized power.
+  N is justified by this analysis, never by convenience.
+
+tests:
+  - "Paired Wilcoxon signed-rank test on the per-seed ACC differences (primary)."
+  - "Bootstrap 95% percentile CI on the mean paired ACC difference."
+  - "Standardized paired effect size (Cohen's d) with bootstrap CI."
+  - "Friedman omnibus across all arms + Holm-corrected post-hoc arm-vs-baseline."
+  - "rliable IQM / performance profiles / probability of improvement (robust aggregates)."
+  - "Holm-Bonferroni multiple-comparison correction across the arm-vs-control family."
+  - "A/A control: two seeds of the reference arm must show NO significant difference (noise floor)."
+
+rejection_criteria:
+  - >-
+    REJECT H0 (confirm H1) iff the mean paired ACC difference (full_dream -
+    no_sleep) is positive, its bootstrap 95% CI excludes zero, the paired
+    Wilcoxon p-value is below the Holm-corrected family-wise alpha (0.05), AND
+    the effect magnitude exceeds the A/A noise floor.
+  - >-
+    FAIL TO REJECT H0 (refute H1 in this regime) if the bootstrap 95% CI of the
+    paired difference includes zero, or the effect does not exceed the A/A noise
+    floor.
+  - >-
+    Declare INCONCLUSIVE only if the matched-budget controller could not equalize
+    budgets within tolerance (so the contrast is confounded by compute) and only
+    a Pareto comparison is available.
+
+negative_result_forms:
+  - "Dreaming is not greater than replay-only at matched budget (effect isolates to mere re-exposure)."
+  - "Neither biological metaphor carries the effect (replay x downscale 2x2: both main-effect CIs include zero)."
+  - "Generative augmentation degrades precise retrieval past an augmentation-volume threshold."
+  - "Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover)."
+  - "Gating is unnecessary (continuous online writes match gated writes once decay + protection are present)."
+  - "Adaptive sleep pressure is not greater than fixed cycles (the added controller is unjustified)."
+
+committed_git_hash: null

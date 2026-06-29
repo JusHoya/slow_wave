@@ -1,0 +1,101 @@
+# Phase 4 eval-harness SMOKE config — fast, deterministic, mock-LLM.
+#
+#   python -m slow_wave.eval.runner --config configs/eval_smoke.yaml
+#
+# Runs all nine control arms on ONE shared stream at matched budgets, computes
+# the metric + statistics suites, the A/A noise floor, the prereg primary
+# endpoint, and the temperature-0 stability + memory-drift controls, then writes
+# a single experiment manifest. Tiny grid (3 tasks, 3 seeds) so CI stays fast;
+# the science-scale grid lives in configs/eval_full.yaml.
+
+experiment: eval-smoke
+description: Phase 4 nine-arm control battery (smoke) over a distractor-heavy stream.
+seed: 7
+
+model:
+  id: claude-opus-4-8
+  temperature: 0.0
+  max_tokens: 48
+
+embedding:
+  backend: hash
+  model: hash-bow-v1
+  dim: 384
+
+sim_time:
+  compression_factor: 60.0
+
+stream:
+  scenario: task-incremental
+  n_tasks: 3
+  items_per_task: 24
+  label_mix:          # distractor-heavy (oracle-ceiling check, FR5.1)
+    signal: 0.34
+    distractor: 0.40
+    noise: 0.26
+  contradiction_rate: 0.0
+  drift: 0.0
+  recency_bias: 0.0
+  n_subjects_per_task: 6
+  n_attributes: 4
+  n_values: 12
+  probes_per_task: 5
+  distractor_namespace_size: 48
+  noise_vocab_size: 96
+  noise_tokens: 8
+
+memory:
+  episodic_capacity: 30   # bounded => the no-sleep baseline forgets; arms diverge
+  archival_enabled: true
+  retrieval_policy: recency_importance_relevance
+  retrieval_top_k: 12
+  recency_half_life: 64.0
+
+agent:
+  token_budget: null
+  reasoning_calls: per_task
+
+dream:
+  enabled: true
+  replay_enabled: true
+  transfer_enabled: true
+  downscale_enabled: true
+  augment_enabled: true
+  conflict_enabled: false
+  sleep_every_n_tasks: 1
+  sleep_pressure_mode: fixed
+  replay_sample_size: 16
+  replay_strategy: prioritized
+  transfer_batch_size: 8
+  cls_interleave: true
+  cls_interleave_ratio: 0.5
+  decay_function: exponential
+  repotentiate_boost: 1.5
+  augment_per_cycle: 3
+
+eval:
+  arms:
+    - no_sleep
+    - replay_only
+    - downscale_only
+    - random_pruning
+    - full_dream
+    - reflection
+    - oracle
+    - long_context
+    - aa
+  seeds: [0, 1, 2]
+  match_budget: true
+  budget_tolerance: 0.15
+  bootstrap_resamples: 2000
+  ci_level: 0.95
+  stats_seed: 0
+  prereg_path: prereg/preregistration.yaml
+  primary_endpoint: acc_diff_full_dream_vs_no_sleep
+  stability_repeats: 3
+  drift_rounds: 3
+  aa_reference_arm: no_sleep
+  treatment_arm: full_dream
+  baseline_arm: no_sleep
+
+output_dir: runs
