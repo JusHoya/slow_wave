@@ -12,7 +12,30 @@ relevance** so the effect can be measured falsifiably. The bench generates the
 data a final scientific paper reports. See [`PRD.md`](PRD.md) for the full
 vision, requirements, and phased roadmap.
 
-## Status: Phase 3 — The Dream Engine (four ablatable operators)
+## Status: Phase 4 — Evaluation Harness, Control Battery & Preregistration
+
+Phase 4 wires the whole study into **one harness**: the **nine control arms**
+(`no_sleep`, `replay_only`, `downscale_only`, `random_pruning`, `full_dream`,
+`reflection`, `oracle`, `long_context`, `aa`) run on one shared stream per seed
+at **matched budgets**, with the full metric and statistics suites and a
+committed **preregistration**. The metric layer reports the continual-learning
+metrics (ACC/BWT/FWT/forgetting) **and** the bench's mechanism-level superpower —
+prune **precision/recall/F1** against ground-truth relevance plus a
+salience-vs-relevance **calibration curve**, reported *decoupled* from accuracy.
+The statistics suite (pure NumPy, so CI stays green without scipy/rliable)
+provides bootstrap 95% CIs, rliable IQM / performance profiles /
+probability-of-improvement, paired Wilcoxon + Friedman omnibus, standardized
+effect sizes with CIs, and Holm multiple-comparison correction. The
+**matched-budget controller** equalizes tokens/retrieval/memory within tolerance,
+records actuals, and always emits an accuracy-vs-compute **Pareto frontier**. The
+**A/A control** establishes the seed-noise floor; the **oracle** arm is the
+prune-quality ceiling. The committed **preregistration** (`prereg/preregistration.yaml`)
+names H1/H0, the single primary endpoint, the seed plan + power analysis, the
+tests, and the rejection criteria — and the analysis **refuses** to compute a
+non-preregistered primary endpoint. Temperature-0 **stability** and
+**memory-drift** bias controls round out FR5.6. One command runs it all:
+`python -m slow_wave.eval.runner --config configs/eval_smoke.yaml`. The
+authoritative interface spec is [`docs/PHASE4_CONTRACT.md`](docs/PHASE4_CONTRACT.md).
 
 Phase 0 stood up the repo, configuration, pinned dependencies, the run-manifest
 + reproducibility harness, CI, and a one-command "hello-bench" smoke run
@@ -154,6 +177,28 @@ so they survive episodic eviction — measurably reducing backward transfer. (Wh
 dreaming beats the baseline at *matched budget* is a Phase 4/5 question, not
 asserted here.)
 
+### Run the nine-arm control battery (Phase 4)
+
+```bash
+# Deterministic; hash embeddings + mock LLM by default (no key / heavy deps needed)
+python -m slow_wave.eval.runner --config configs/eval_smoke.yaml
+# or, with POSIX make:
+make repro-eval
+
+# The science-scale >=5-seed grid:
+python -m slow_wave.eval.runner --config configs/eval_full.yaml
+```
+
+This runs all nine control arms on one shared stream per seed, matches budgets,
+and writes `runs/eval/manifest.json` carrying every `(arm, seed)` result
+(continual metrics **and** mechanism-level prune precision/recall/F1 +
+calibration), the matched-budget verdict + Pareto frontier, the full statistics
+suite, the A/A noise floor, the preregistered primary endpoint with its verdict,
+and the temperature-0 stability + memory-drift controls. The statistics are pure
+NumPy (no scipy/rliable needed), so this is fully reproducible and CI-safe. (The
+H1/H0 *decision* on real long-horizon runs is Phase 5; Phase 4 ships the
+instrument and the committed preregistration that binds it.)
+
 ### LLM: real call vs. deterministic mock
 
 The smoke run makes a **real Claude API call when `ANTHROPIC_API_KEY` is set**
@@ -180,4 +225,6 @@ pip install -r requirements-optional.txt
 - Phase 1 interface contract: [`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md)
 - Phase 2 interface contract: [`docs/PHASE2_CONTRACT.md`](docs/PHASE2_CONTRACT.md)
 - Phase 3 interface contract: [`docs/PHASE3_CONTRACT.md`](docs/PHASE3_CONTRACT.md)
+- Phase 4 interface contract: [`docs/PHASE4_CONTRACT.md`](docs/PHASE4_CONTRACT.md)
+- Preregistration: [`prereg/preregistration.yaml`](prereg/preregistration.yaml)
 - Product requirements & roadmap: [`PRD.md`](PRD.md)
