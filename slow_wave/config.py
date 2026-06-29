@@ -253,6 +253,92 @@ class DreamConfig(BaseModel):
     ``"lower_salience"`` one); the survivor is never hard-deleted (FR4.7)."""
 
 
+class EvalConfig(BaseModel):
+    """Phase 4 evaluation-harness, control-battery & preregistration config (FR5.x).
+
+    Controls the one harness that runs the **nine control arms** (FR5.1) on a
+    single shared stream at **matched budgets** (FR5.2), computes the metric
+    (FR5.3) + statistics (FR5.4) suites, and enforces the committed
+    **preregistration** (FR5.5) and bias controls (FR5.6). ``extra="forbid"`` so a
+    typo'd knob fails loudly at load time.
+
+    The canonical arm names (validated against the
+    :data:`slow_wave.eval.arms.ARM_REGISTRY` by the harness, not here, to avoid a
+    config->arms import cycle) are: ``no_sleep``, ``replay_only``,
+    ``downscale_only``, ``random_pruning``, ``full_dream``, ``reflection``,
+    ``oracle``, ``long_context``, ``aa``.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    # -- Arms & seeds (FR5.1, FR5.4) ---------------------------------------- #
+    arms: list[str] = Field(
+        default_factory=lambda: [
+            "no_sleep",
+            "replay_only",
+            "downscale_only",
+            "random_pruning",
+            "full_dream",
+            "reflection",
+            "oracle",
+            "long_context",
+            "aa",
+        ]
+    )
+    """Which control arms to run (each name must resolve in the arm registry).
+    Defaults to all nine (FR5.1)."""
+
+    seeds: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4])
+    """Seed list for the arm x seed grid. ``>= 5`` seeds per arm is the Phase 4/5
+    floor (FR5.4); each seed deterministically derives **both** the agent/LLM
+    sampling seed and the stream-generation seed (FR5.4: vary both)."""
+
+    # -- Matched-budget controller (FR5.2) ---------------------------------- #
+    match_budget: bool = True
+    """Whether the matched-budget controller equalizes tokens/retrieval/memory
+    across arms (FR5.2). When matching is infeasible a Pareto frontier of
+    accuracy vs. compute is produced instead."""
+    budget_tolerance: float = Field(default=0.15, ge=0.0)
+    """Fractional tolerance within which per-arm token/retrieval/memory actuals
+    must match the target to count as 'matched' (FR5.2)."""
+    token_budget: int | None = None
+    """Optional explicit shared token ceiling applied to every arm; ``None`` =>
+    the harness derives a common ceiling from the arms' unconstrained actuals."""
+
+    # -- Statistics (FR5.4) ------------------------------------------------- #
+    bootstrap_resamples: int = Field(default=10000, ge=100)
+    """Number of bootstrap resamples for 95% CIs / robust aggregates (FR5.4)."""
+    ci_level: float = Field(default=0.95, gt=0.0, lt=1.0)
+    """Confidence level for all reported intervals (FR5.4)."""
+    stats_seed: int = 0
+    """Seed for the bootstrap RNG so CIs are reproducible bit-for-bit (DX1)."""
+
+    # -- Preregistration (FR5.5) -------------------------------------------- #
+    prereg_path: str = "prereg/preregistration.yaml"
+    """Path to the committed registered-report artifact (FR5.5). Analysis reads
+    the single primary endpoint from here and refuses any other (DX3)."""
+    primary_endpoint: str = "acc_diff_full_dream_vs_no_sleep"
+    """Name of the primary endpoint to compute. MUST equal the prereg's
+    ``primary_endpoint`` or the analysis refuses to run (FR5.5/DX3)."""
+
+    # -- Bias controls (FR5.6) ---------------------------------------------- #
+    stability_repeats: int = Field(default=3, ge=2)
+    """Repeats of the dream summarizer for the temperature-0 stability control
+    (FR5.6): run-to-run variance of the summary output."""
+    drift_rounds: int = Field(default=3, ge=2)
+    """Rounds of repeated summarization for the memory-drift detector (FR5.6):
+    flags when re-summarization degrades rather than distills memory."""
+
+    # -- A/A control + primary-endpoint arms (FR5.1) ------------------------ #
+    aa_reference_arm: str = "no_sleep"
+    """The arm the A/A control runs twice (two seeds, identical config) to
+    establish the noise floor (FR5.1)."""
+    treatment_arm: str = "full_dream"
+    baseline_arm: str = "no_sleep"
+    """The treatment vs. baseline arms whose paired difference is the primary
+    endpoint (must match the prereg)."""
+
+
 class Config(BaseModel):
     """Top-level experiment configuration.
 
@@ -274,6 +360,7 @@ class Config(BaseModel):
     memory: MemoryConfig = Field(default_factory=MemoryConfig)  # Phase 2: memory substrate
     agent: AgentConfig = Field(default_factory=AgentConfig)  # Phase 2: wake agent
     dream: DreamConfig = Field(default_factory=DreamConfig)  # Phase 3: dream engine
+    eval: EvalConfig = Field(default_factory=EvalConfig)  # Phase 4: eval harness
     hyperparameters: dict[str, Any] = Field(default_factory=dict)
     search_ranges: dict[str, Any] = Field(default_factory=dict)
     output_dir: str = "runs"
