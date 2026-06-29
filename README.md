@@ -12,13 +12,13 @@ relevance** so the effect can be measured falsifiably. The bench generates the
 data a final scientific paper reports. See [`PRD.md`](PRD.md) for the full
 vision, requirements, and phased roadmap.
 
-## Status: Phase 1 — Synthetic Continual Task Stream Generator
+## Status: Phase 2 — Memory Substrate + Baseline (No-Sleep) Wake Agent
 
 Phase 0 stood up the repo, configuration, pinned dependencies, the run-manifest
 + reproducibility harness, CI, and a one-command "hello-bench" smoke run
 ([`docs/PHASE0_CONTRACT.md`](docs/PHASE0_CONTRACT.md)).
 
-Phase 1 builds the measurement substrate: a deterministic **synthetic continual
+Phase 1 built the measurement substrate: a deterministic **synthetic continual
 task stream generator** that emits labeled streams with ground-truth relevance
 (`signal`/`distractor`/`noise`), controllable distractor regimes, temporal
 structure and contradictions, an explicit continual-learning scenario tag
@@ -28,6 +28,20 @@ trivial oracle. A **confound guard** (FR1.6) enforces — and proves by test —
 that ground-truth labels can never reach an online retrieval/priority code path.
 The authoritative cross-module interface spec is
 [`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md).
+
+Phase 2 adds the **dual-store memory substrate** and the **no-sleep wake agent**
+— the catastrophic-forgetting reference the whole study is measured against. The
+substrate has physically separate **EPISODIC**, **SEMANTIC/SKILL**, and auditable
+**ARCHIVAL** tiers with a salience model (recency, access, novelty, provenance),
+a pluggable recency×importance×relevance retrieval policy, eviction that
+**demotes** rather than deletes, and EWC-spirit **write-protection** (a distractor
+overwriting a protected fact is a logged failure event). The wake agent runs a
+Phase 1 stream end-to-end **without any dream cycle** (no semantic writes during
+wake — those are gated to sleep), populates `R[i,j]` from held-out probes, and
+emits cost/footprint telemetry to a manifest. With a capacity-bounded episodic
+store on a noisy stream the baseline **demonstrably forgets** (backward transfer
+< 0). The authoritative interface spec is
+[`docs/PHASE2_CONTRACT.md`](docs/PHASE2_CONTRACT.md).
 
 ## Repository layout
 
@@ -83,6 +97,26 @@ This writes four byte-reproducible artifacts under `runs/stream/`:
 answers), and `accuracy_matrix.json` (the `R[i,j]` skeleton vs. the trivial
 oracle). Given the same config + seed, every file is byte-identical across runs.
 
+### Run the no-sleep baseline wake agent (Phase 2)
+
+```bash
+# Deterministic; hash embeddings + mock LLM by default (no key / heavy deps needed)
+python -m slow_wave.agent.runner --config configs/agent_smoke.yaml
+# or, with POSIX make:
+make repro-agent
+
+# The capacity-bounded, noisy config in which the baseline demonstrably forgets:
+python -m slow_wave.agent.runner --config configs/agent_forgetting.yaml
+```
+
+This runs a Phase 1 stream end-to-end through the dual-store memory substrate and
+writes `runs/agent/manifest.json` carrying the populated `R[i,j]`, the
+continual-learning metrics (ACC, BWT, forward transfer, per-task forgetting), the
+per-tier memory footprint, and cost/latency telemetry. `agent_smoke.yaml` uses an
+unbounded store (clean lower-triangular `R`, BWT≈0); `agent_forgetting.yaml`
+bounds the episodic store so older tasks are evicted (demoted to the archival
+tier) and backward transfer goes clearly negative.
+
 ### LLM: real call vs. deterministic mock
 
 The smoke run makes a **real Claude API call when `ANTHROPIC_API_KEY` is set**
@@ -106,4 +140,6 @@ pip install -r requirements-optional.txt
 ## More
 
 - Phase 0 interface contract: [`docs/PHASE0_CONTRACT.md`](docs/PHASE0_CONTRACT.md)
+- Phase 1 interface contract: [`docs/PHASE1_CONTRACT.md`](docs/PHASE1_CONTRACT.md)
+- Phase 2 interface contract: [`docs/PHASE2_CONTRACT.md`](docs/PHASE2_CONTRACT.md)
 - Product requirements & roadmap: [`PRD.md`](PRD.md)
