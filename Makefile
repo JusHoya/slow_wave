@@ -7,7 +7,7 @@
 #
 # (Recipe lines below are TAB-indented, as POSIX make requires.)
 
-.PHONY: setup test repro-smoke repro-stream repro-agent lint
+.PHONY: setup test repro-smoke repro-stream repro-agent repro-dream lint
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -25,6 +25,11 @@ repro-stream:
 # Phase 2: run the no-sleep wake agent end-to-end; writes R[i,j] + cost telemetry.
 repro-agent:
 	python -m slow_wave.agent.runner --config configs/agent_smoke.yaml
+
+# Phase 3: run the sleep-enabled dream agent; writes R[i,j] + wake/dream telemetry
+# + a provenance/archival audit. (configs/dream_full.yaml is the treatment arm.)
+repro-dream:
+	python -m slow_wave.dream.runner --config configs/dream_smoke.yaml
 
 lint:
 	python -c "import slow_wave; print(slow_wave.__version__)"

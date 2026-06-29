@@ -177,8 +177,10 @@ class WakeAgent:
         #: runner can record ``mocked`` honestly on its aggregate cost object.
         self.n_real_calls: int = 0
 
-    def run(self, stream: Stream, probe_set: ProbeSet) -> WakeResult:
-        """Run the no-sleep wake pass and return its result (FR3.1-FR3.3).
+    def run(
+        self, stream: Stream, probe_set: ProbeSet, *, sleep_hook=None
+    ) -> WakeResult:
+        """Run the wake pass and return its result (FR3.1-FR3.3).
 
         Single online pass, evaluating after each task:
 
@@ -186,18 +188,31 @@ class WakeAgent:
         2. Batch-embed item contents and probe queries once each.
         3. For each task ``t`` (ascending): ingest its items into the episodic
            tier (with a per-item wake-time context retrieve), make the optional
-           budget-gated reasoning call, then evaluate every probe to fill row
-           ``R[t][j]`` (fraction of task ``j``'s probes answered correctly).
+           budget-gated reasoning call, run the optional **sleep window**
+           (``sleep_hook``), then evaluate every probe to fill row ``R[t][j]``
+           (fraction of task ``j``'s probes answered correctly).
         4. Bundle the accuracy matrix, continual metrics, and footprint.
+
+        The optional ``sleep_hook`` is the Phase 3 integration seam: it is the
+        *only* place consolidation (semantic writes) is allowed to happen
+        (gating, FR4.5/EC3). When ``sleep_hook`` is ``None`` (the Phase 2
+        no-sleep baseline) the run is byte-identical to before — no cycle runs and
+        the semantic store stays empty.
 
         Args:
             stream: The stream to process (consumed via the label-free online
                 view only — labels are never read).
             probe_set: The held-out probe set scored after each task.
+            sleep_hook: Optional callable invoked once per task segment, after
+                ingest + reasoning and **before** evaluation, with the keyword
+                signature ``sleep_hook(substrate, *, embedder, llm_complete,
+                now_order, task_index)``. The Phase 3 dream engine supplies it;
+                it consolidates recent episodics into the semantic store. The hook
+                must not read labels (FR1.6).
 
         Returns:
             A :class:`WakeResult`. Deterministic given ``(cfg, stream,
-            probe_set)`` under the mock LLM.
+            probe_set)`` (and a deterministic ``sleep_hook``) under the mock LLM.
         """
         cfg = self.cfg
         telemetry = WakeTelemetry()
@@ -302,6 +317,21 @@ class WakeAgent:
                     telemetry.reasoning_calls_made += 1
                     if not result.mocked:
                         self.n_real_calls += 1
+
+            # Sleep window (Phase 3, FR4.5/EC3): the dream engine consolidates
+            # recent episodics into the SEMANTIC store HERE and only here, so all
+            # semantic writes are gated to scheduled sleep (none during ingest).
+            # No-op in the Phase 2 no-sleep baseline (sleep_hook is None), keeping
+            # that run byte-identical. Evaluation below runs against post-cycle
+            # memory, so consolidated facts can survive episodic eviction.
+            if sleep_hook is not None:
+                sleep_hook(
+                    self.substrate,
+                    embedder=self.embedder,
+                    llm_complete=self.llm_complete,
+                    now_order=now_order,
+                    task_index=t,
+                )
 
             # Evaluate every probe against current active memory -> row R[t].
             row: list[float] = []
