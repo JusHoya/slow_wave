@@ -273,5 +273,6 @@ pip install -r requirements-optional.txt
 - Phase 2 interface contract: [`docs/PHASE2_CONTRACT.md`](docs/PHASE2_CONTRACT.md)
 - Phase 3 interface contract: [`docs/PHASE3_CONTRACT.md`](docs/PHASE3_CONTRACT.md)
 - Phase 4 interface contract: [`docs/PHASE4_CONTRACT.md`](docs/PHASE4_CONTRACT.md)
+- Phase 5 interface contract: [`docs/PHASE5_CONTRACT.md`](docs/PHASE5_CONTRACT.md)
 - Preregistration: [`prereg/preregistration.yaml`](prereg/preregistration.yaml)
 - Product requirements & roadmap: [`PRD.md`](PRD.md)
