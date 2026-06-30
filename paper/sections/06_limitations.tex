@@ -12,8 +12,60 @@ behave as designed, and nothing more. They are \emph{not} measurements of a real
 Claude model. In particular, the very large primary effect ($d=\SWprimaryD$) and
 the near-zero dispersion of the stability control are artifacts of a noiseless
 mock summariser; a real model would introduce sampling variance, summarisation
-drift, and refusals that the mock cannot. No efficacy claim about a real model
-should be read into any number here.
+drift, and refusals that the mock cannot. The same noiseless determinism inflates
+\emph{any} standardised effect computed here --- including the TMR-style Hedges'
+$g=\SWtmrG$ --- so its apparent margin over the $g\approx\SWtmrBench$ benchmark
+reflects an engineered operator scored against noisy human data, not evidence of a
+strong targeting effect; the direction of the lift, not its benchmark-relative
+magnitude, is what the mock can speak to. For the same reason, the inferential
+layer --- bootstrap CIs, the paired Wilcoxon and Friedman tests, Holm--Bonferroni
+correction, and the \texttt{rliable} robust aggregates --- characterises dispersion
+across seed-driven stream re-instantiations rather than population-level inference,
+and the signed-rank $p$ is computed by a normal approximation that is
+near-saturated at $n=\SWnSeeds$ seeds; we report these as descriptive statistics
+and treat genuine hypothesis testing, ideally with an exact signed-rank test, as
+pending a real-model run. No efficacy claim about a real model should be read into
+any number here.
+
+\paragraph{What the accuracy scores measure (retention, not probe-time reasoning).}
+Under the mock LLM, probe answers are read by exact-key lookup over active memory
+and never from the model (Appendix~\ref{app:hyper}). Final accuracy is therefore a
+deterministic function of \emph{which facts survive in active memory}: the
+consolidation operators move ACC only by changing what is retained, and the frozen
+LLM does no probe-time reasoning that affects any score. The continual-learning
+metrics (ACC/BWT/FWT) remain valid \emph{retention} measures --- they quantify
+whether replayed signal survives episodic eviction, exactly what consolidation is
+meant to affect --- but in this regime they are not measurements of model
+reasoning. A direct consequence is that \texttt{long\_context}'s perfect accuracy
+(Table~\ref{tab:arms}) and the resulting absence of a long-context crossover
+(Section~\ref{sec:results}) are structurally entailed by exact-key retention rather
+than empirical findings about long-context reasoning; a real model would face
+token cost growing with stream length and lost-in-the-middle degradation that the
+lookup cannot show.
+
+\paragraph{Unmatched budgets (the primary contrast is a cost-effectiveness result).}
+The matched-budget controller is part of the apparatus, but in this grid it does
+\emph{not} succeed: \texttt{full\_dream} spends more LLM tokens and holds more
+memory vectors than \texttt{no\_sleep} (Table~\ref{tab:arms}), outside the
+controller's tolerance band, so the committed \texttt{budget\_matched} verdict is
+false in every regime. Per the preregistered fallback we therefore report the
+primary contrast on the accuracy-vs-compute Pareto frontier: the full dream cycle
+buys $\Delta=\SWprimaryDiff$ final ACC over the no-sleep baseline at a higher token
+and memory price, not for free at a matched budget. The defensible claim is
+cost-effectiveness on this frontier, not a budget-neutral win.
+
+\paragraph{The treatment is not the cost-optimal deployable arm.} On the
+accuracy-versus-token frontier the full four-operator cycle is Pareto-dominated not
+only by the uncapped \texttt{long\_context} ceiling but by \texttt{reflection}, a
+deployable shallow-synthesis control \citep{park2023generativeagents} that reaches
+higher final accuracy at lower token cost and comparable memory
+(Table~\ref{tab:arms}, Figure~\ref{fig:pareto}). The preregistered H1 asked only
+whether the full cycle beats its no-sleep/replay-only ablations --- the mechanism
+question --- which it does; it did \emph{not} ask, and these results do not show,
+that the full cycle is the best deployable consolidation strategy. Its
+distinguishing value here is operator-level decomposability and the
+consolidation-quality readout (on which it retains higher recall and F1 than
+\texttt{reflection}), not a superior accuracy-per-token operating point.
 
 \paragraph{Frozen-weights scope.} We study \emph{memory} consolidation for
 \textbf{frozen-weights} agents: the model is never fine-tuned, RLHF'd, or

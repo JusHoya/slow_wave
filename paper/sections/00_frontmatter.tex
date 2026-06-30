@@ -20,7 +20,7 @@ a synthetic continual task stream with injected distractors and
 \emph{ground-truth relevance labels}, a dual-store (episodic/semantic/archival)
 memory substrate, and a four-operator dream engine (replay, transfer,
 downscale, generative-augment) whose operators are independently ablatable. A
-preregistered, matched-budget control battery of \SWnArms{} arms --- including a
+preregistered, budget-controlled control battery of \SWnArms{} arms --- including a
 ground-truth-blind random-pruning negative control, an oracle prune ceiling, a
 long-context baseline, and an A/A noise floor --- is run over an
 arm\,$\times$\,regime\,$\times$\,seed grid (\SWnCells{} cells,
@@ -29,11 +29,20 @@ arm\,$\times$\,regime\,$\times$\,seed grid (\SWnCells{} cells,
 retaining signal. \textbf{All reported numbers are a mechanism demonstration
 produced under a deterministic mock LLM in the synthetic stream, and are not
 claims about a real Claude model.} In this regime the full dream cycle improves
-final average accuracy over the no-sleep baseline at matched budget (paired
-$\Delta=\SWprimaryDiff$, 95\% CI $[\SWprimaryCIlo,\SWprimaryCIhi]$); a replay-targeting
-analogue exceeds a sleep-targeted-memory-reactivation benchmark; and, reported
-as a first-class finding, a long-context baseline dominates on raw accuracy at
-maximum cost with no cost-adjusted crossover in the swept stream lengths. We
+final average accuracy over the no-sleep baseline on the preregistered primary
+endpoint (paired $\Delta=\SWprimaryDiff$, 95\% CI
+$[\SWprimaryCIlo,\SWprimaryCIhi]$), with a registered secondary contrast confirming
+it also beats a replay-only control; because the realised token and memory
+budgets are not matched within tolerance, we report these as cost-effectiveness
+results on the accuracy-vs-compute Pareto frontier rather than matched-budget
+wins. A replay-targeting analogue moves signal into durable memory as designed,
+though its standardised margin over a sleep-targeted-memory-reactivation
+benchmark is inflated by the mock's determinism and is not a meaningful
+comparison. Reported with equal prominence as first-class findings, both an
+uncapped long-context baseline and a simpler deployable shallow-synthesis control
+(\texttt{reflection}) dominate the full cycle on the accuracy-vs-token frontier ---
+long-context on raw accuracy at maximum memory cost (with no cost-adjusted crossover in
+the swept stream lengths), reflection at higher accuracy and lower token cost. We
 treat negative and cost-unfavourable patterns with the same rigor as the
 positive result, and release the apparatus, preregistration, manifests, and a
 one-command reproduction of every figure and number.

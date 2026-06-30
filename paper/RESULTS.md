@@ -72,4 +72,4 @@ Registered secondary contrasts:
 
 - **full_dream vs replay_only**: full_dream > replay_only (delta=+0.371, 95% CI [0.312, 0.425], wilcoxon p=0.014)
 
-no negative-result form OVERTURNS H1: the primary endpoint is confirmed and the registered secondary contrast is positive. However, the following preregistered negative pattern(s) ARE observed and reported (see the crossover / EC6 section): 'Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover).'. These concern secondary cost/length trade-offs, not the matched-budget primary contrast.
+no negative-result form OVERTURNS H1: the primary endpoint is confirmed and the registered secondary contrast is positive. However, the following preregistered negative pattern(s) ARE observed and reported (see the crossover / EC6 section): 'Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover).'. These concern secondary cost/length trade-offs, not the primary-endpoint contrast (reported on the accuracy-vs-compute Pareto frontier, since budgets were not matched within tolerance).

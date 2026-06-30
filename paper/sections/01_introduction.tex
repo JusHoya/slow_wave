@@ -36,11 +36,13 @@ which a mechanism discards distractors while retaining signal --- reported
 
 We then ask the question the way a skeptic would. The treatment (a full
 four-operator dream cycle) is compared against a battery of \SWnArms{} control
-arms at matched LLM-token, retrieval, and memory budgets, with a single
-\emph{preregistered} primary endpoint, a ground-truth-blind random-pruning
-negative control, an oracle prune ceiling, a long-context baseline (the key
-validity threat), and an A/A control that fixes the noise floor any claimed
-effect must clear. The verdict is recorded whichever way the data fall, and a
+arms through a matched-budget controller over LLM-token, retrieval, and memory
+budgets (with an accuracy-vs-compute Pareto frontier reported where budgets
+cannot be matched within tolerance, as they cannot for the full cycle here), with
+a single \emph{preregistered} primary endpoint, a ground-truth-blind
+random-pruning negative control, an oracle prune ceiling, a long-context baseline
+(the key validity threat), a deployable shallow-synthesis control, and an A/A
+control that fixes the noise floor any claimed effect must clear. The verdict is recorded whichever way the data fall, and a
 negative or cost-unfavourable result is a first-class, pre-specified outcome.
 
 \paragraph{An honesty caveat, stated up front.} The numbers in this paper were
@@ -63,7 +65,7 @@ Claude model. We restate this caveat wherever results appear
   (\emph{replay}, \emph{transfer}, \emph{downscale}, \emph{generative-augment})
   whose operators are independently ablatable in a two-phase (NREM\,$\to$\,REM)
   cycle.
-  \item \textbf{A protocol.} A preregistered, matched-budget experimental design
+  \item \textbf{A protocol.} A preregistered, budget-controlled experimental design
   with a \SWnArms{}-arm control battery (including a ground-truth-blind negative
   control, an oracle ceiling, a long-context baseline, and an A/A noise floor),
   a metric suite that reports continual-learning metrics (ACC/BWT/FWT/forgetting)
@@ -71,12 +73,22 @@ Claude model. We restate this caveat wherever results appear
   relevance, and a statistics suite with bootstrap CIs, robust aggregates,
   paired and omnibus tests, effect sizes, and multiple-comparison correction.
   \item \textbf{Ablation results, including negatives.} Under the mock-LLM
-  mechanism-demonstration regime: a confirmed matched-budget improvement of the
-  full dream cycle over the no-sleep baseline on the primary endpoint
-  ($\Delta=\SWprimaryDiff$); a replay-targeting effect that exceeds a
-  targeted-memory-reactivation benchmark; \emph{and}, reported with equal weight,
-  the finding that a long-context baseline dominates on raw accuracy at maximum
-  cost with \emph{no} cost-adjusted crossover in the swept stream lengths ---
-  mapping the cost regime in which external consolidation is, and is not, worth
-  paying for.
+  mechanism-demonstration regime: a confirmed improvement of the full dream cycle
+  over the no-sleep baseline on the preregistered primary endpoint
+  ($\Delta=\SWprimaryDiff$), with the registered secondary contrast confirming it
+  also beats the replay-only re-exposure control --- the mechanism question H1 was
+  written to answer, \emph{not} a claim that the cycle is the best deployable arm,
+  and realised at higher token and memory cost, so the contrast is reported on the
+  accuracy-vs-compute Pareto frontier; a replay-targeting effect that demonstrably
+  moves signal into durable memory (its standardised size against a
+  targeted-memory-reactivation benchmark is reported but treated as a determinism
+  artifact, not a favourable comparison); \emph{and}, reported with equal weight,
+  two cost-unfavourable findings --- that an uncapped long-context baseline
+  dominates on raw accuracy at maximum memory cost with \emph{no} cost-adjusted crossover
+  in the swept stream lengths, and that a simpler deployable shallow-synthesis
+  control (\texttt{reflection}) attains higher final accuracy than the full cycle
+  at lower token cost (Table~\ref{tab:arms}), leaving the cycle off the
+  accuracy-vs-token Pareto frontier --- together mapping the cost regime in which
+  external consolidation, and this particular four-operator cycle, is and is not
+  worth paying for.
 \end{itemize}

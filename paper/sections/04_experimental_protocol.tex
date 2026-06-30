@@ -7,7 +7,10 @@ statistical tests, and explicit rejection criteria (Appendix~\ref{app:repro};
 \citealp{pineau2021reproducibility}). The analysis code reads the preregistered
 primary endpoint and refuses to compute any other, so falsifiability is visible
 in the code. The hypotheses are: \textbf{H1} --- at matched LLM-token,
-retrieval, and memory budgets, the full four-operator dream cycle
+retrieval, and memory budgets (the precondition \emph{as preregistered}; the
+realised grid did not meet it, so the verdict is reported on the budget-agnostic
+endpoint and the accuracy-vs-compute Pareto frontier below), the full
+four-operator dream cycle
 (\texttt{full\_dream}) yields higher final average accuracy (ACC) than the
 no-sleep baseline (\texttt{no\_sleep}) on a distractor-heavy stream, with the
 paired per-seed difference strictly positive and its bootstrap 95\% CI excluding
@@ -17,25 +20,41 @@ noise floor. The \textbf{primary endpoint} is
 \texttt{full\_dream} and \texttt{no\_sleep}, aggregated as the mean paired
 difference, with a bootstrap 95\% CI, a paired Wilcoxon signed-rank test, and a
 standardised effect size; the effect must also exceed the A/A noise floor to
-count as confirmed.
+count as confirmed. In the realised grid the matched-budget controller finds
+\texttt{full\_dream} out of tolerance on tokens and memory vectors --- it spends
+more of both than \texttt{no\_sleep} (Table~\ref{tab:arms}) --- so the committed
+\texttt{budget\_matched} verdict is false in every regime; per the preregistered
+fallback below, the primary and secondary contrasts are therefore reported on the
+accuracy-vs-compute Pareto frontier, as cost-effectiveness results rather than
+matched-budget free lunches.
 
-\paragraph{Control battery.} \SWnArms{} arms share one harness at matched
-budgets: \texttt{no\_sleep} (wake-only baseline), \texttt{replay\_only},
+\paragraph{Control battery.} \SWnArms{} arms share one harness under a
+matched-budget controller: \texttt{no\_sleep} (wake-only baseline), \texttt{replay\_only},
 \texttt{downscale\_only}, \texttt{random\_pruning} (a ground-truth-blind negative
 control), \texttt{full\_dream} (treatment), \texttt{reflection} (the
 shallow-synthesis control of \citealp{park2023generativeagents}), \texttt{oracle}
 (prune exactly the injected distractors using the held-out labels --- a ceiling,
 not a deployable arm), \texttt{long\_context} (the entire stream stuffed into a
 long context with no consolidation --- the key validity threat), and \texttt{aa}
-(two identical configs differing only in seed --- the noise floor any claimed
-effect must exceed). A matched-budget controller equalises LLM tokens, retrieval
-calls, and final memory-vector count across arms within tolerance and records
-the actuals; where matching is impossible we report an accuracy-vs-compute
-Pareto frontier instead of a single matched point.
+(two identical configs differing only in seed, whose cross-seed mean-ACC gap is
+the empirically measured noise floor any claimed effect must exceed). A
+matched-budget controller equalises LLM tokens, retrieval calls, and final
+memory-vector count across arms within tolerance and records the actuals; where
+matching is infeasible within tolerance --- as it is for \texttt{full\_dream} in
+this grid --- we report an accuracy-vs-compute Pareto frontier (maximise ACC,
+minimise tokens) instead of a single matched point. On that frontier
+\texttt{reflection} is a fully \emph{deployable} comparator (unlike the
+\texttt{oracle}/\texttt{long\_context} ceilings), so the full cycle's position
+relative to it is a first-class comparison, reported alongside the long-context
+threat in Section~\ref{sec:results}, not a sanity bound.
 
 \paragraph{Metrics.} From $R[i,j]$ we compute average accuracy, backward and
 forward transfer \citep{lopezpaz2017gem}, and the per-task Forgetting Measure
-\citep{chaudhry2018riemannian}. The bench's distinctive measurement is
+\citep{chaudhry2018riemannian}. Forward transfer is structurally zero on this
+task-incremental stream --- independent per-task fact sets leave nothing to
+transfer forward before a task is first seen --- so we report it for completeness,
+not as a discriminating metric (Section~\ref{sec:results}). The bench's
+distinctive measurement is
 \emph{mechanism-level}: precision, recall, and F1 of consolidation at discarding
 distractors versus retaining signal, plus a calibration curve of embedding-decay
 against true relevance --- reported \emph{decoupled} from downstream accuracy.

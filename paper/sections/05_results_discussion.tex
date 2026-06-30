@@ -16,7 +16,13 @@ git \texttt{\SWgitCommit}) --- not a claim about a real Claude model
   final memory-vector count, and total tokens (thousands). Means over
   $n=\SWnSeeds$ seeds. The \texttt{oracle} arm (prune exactly the injected
   distractors) and \texttt{long\_context} (no pruning) are ceilings/baselines,
-  not deployable treatments. \MockCaveat}
+  not deployable treatments. Forward transfer (FWT) is identically zero for every
+  arm: with independent per-task fact sets and a zero pre-exposure baseline, no
+  task can be answered before its own material is ingested, so the
+  just-above-diagonal accuracies vanish by construction; we report the column for
+  completeness as part of the standard ACC/BWT/FWT
+  suite~\citep{lopezpaz2017gem}, not as a metric that discriminates arms here.
+  \MockCaveat}
   \label{tab:arms}
   \small
   \input{generated/arm_metrics_table}
@@ -30,14 +36,38 @@ paired difference is $\Delta=\SWprimaryDiff$ (bootstrap 95\% CI
 $[\SWprimaryCIlo,\SWprimaryCIhi]$, \SWprimaryCImethod{} method), the paired
 \SWprimaryTest{} test gives $p=\SWprimaryP$, and the standardised paired effect
 is Cohen's $d=\SWprimaryD$ (\SWprimaryEffectMag). The effect exceeds the A/A
-noise floor of \SWnoiseFloor{} (exceeded=\SWexceedsNoiseFloor), so it clears the
-bar a seed-only difference would produce. The same direction holds in all three
+noise floor of \SWnoiseFloor{} (exceeded=\SWexceedsNoiseFloor) --- not a fixed
+threshold but the empirically measured gap between the mean final ACC of the
+reference config (\texttt{no\_sleep}) evaluated over two disjoint seed families, a
+single cross-seed mean-difference point --- so it clears the bar a seed-only
+difference would produce. Within the mock regime, however, these inferential
+quantities describe dispersion across seed-driven stream re-instantiations rather
+than inference about a real model: the summariser is deterministic, so there is
+zero model-side sampling variance (the stability control's token CV is
+\SWstabilityCV, identical=\SWstabilityIdentical). The \SWprimaryTest{} $p$ is
+moreover near-saturated at $n=\SWnSeeds$ seeds --- $p=\SWprimaryP$ is essentially
+the smallest two-sided value the test can return once all \SWnSeeds{} per-seed
+differences share a sign, which is why it equals the secondary contrast's
+$p=\SWdreamVsReplayP$ --- so we read it descriptively and defer genuine
+significance testing to a real-model run. The same direction holds in all three
 regimes: $\Delta=\SWdiffSignalRich$ (signal-rich, \SWverdictSignalRich),
 $\SWdiffBalanced$ (balanced, \SWverdictBalanced), and $\SWdiffDistractorHeavy$
 (distractor-heavy, \SWverdictDistractorHeavy). Within the mock-LLM regime, then,
-the full dream cycle's operators behave as designed: at matched budget,
-consolidation transfers signal into the semantic store so it survives episodic
-eviction, lifting final accuracy over the no-sleep reference.
+the full dream cycle's operators behave as designed: consolidation protects
+signal --- it preferentially evicts distractors, retaining a far larger fraction
+of true signal than the no-sleep baseline (the bench's signal-retention metric,
+quantified in the next subsection) --- and transfers it into the semantic store so
+it survives episodic eviction, lifting final accuracy over the no-sleep reference. This is a signal-retention effect, not
+a higher aggregate prune F1 (on which the ground-truth-blind control actually
+scores higher), as the next subsection unpacks, and it is bought at higher token
+and memory cost than the no-sleep reference (Table~\ref{tab:arms},
+Figure~\ref{fig:pareto}), not at matched budget. This preregistered primary effect
+is measured against the no-sleep baseline --- and the registered secondary
+contrast against the replay-only control --- the ablation arms that isolate the
+mechanism; it is not a claim that the full cycle is the best deployable arm. A
+simpler deployable control (\texttt{reflection}) reaches higher final accuracy at
+lower token cost, which we surface below as a first-class cost finding, on equal
+footing with the long-context comparison.
 
 The per-task retention pattern (Figure~\ref{fig:retention}) shows the mechanism:
 the no-sleep baseline retains only the most recent tasks (strongly negative
@@ -45,9 +75,11 @@ backward transfer in Table~\ref{tab:arms}), whereas replay-bearing arms retain
 earlier-task signal. The replay\,$\times$\,downscale $2\times2$ ablation
 (Figure~\ref{fig:ablation}) isolates the contribution of each mechanism, and the
 registered secondary contrast confirms that the full cycle also beats
-replay-only at matched budget ($\Delta=\SWdreamVsReplayDelta$, 95\% CI
-$[\SWdreamVsReplayCIlo,\SWdreamVsReplayCIhi]$, Wilcoxon $p=\SWdreamVsReplayP$) ---
-i.e.\ in this regime the effect is not merely re-exposure.
+replay-only ($\Delta=\SWdreamVsReplayDelta$, 95\% CI
+$[\SWdreamVsReplayCIlo,\SWdreamVsReplayCIhi]$, Wilcoxon $p=\SWdreamVsReplayP$),
+again at higher token and memory cost than that re-exposure-only control
+(Table~\ref{tab:arms}) --- i.e.\ in this regime the effect is not merely
+re-exposure.
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.82\linewidth]{retention_curves.pdf}
@@ -72,9 +104,27 @@ Because the bench knows ground truth offline, it scores pruning directly
 (Figure~\ref{fig:mechanism}). The \texttt{oracle} arm attains the highest prune
 precision/recall (it prunes exactly the injected distractors), as it must ---
 a sanity ceiling. Critically, prune quality and downstream accuracy can diverge:
-in Table~\ref{tab:arms} the highest-accuracy deployable arms are not the
-highest-precision pruners, which is exactly why the bench reports the two
-\emph{decoupled} rather than collapsing them into a single score.
+in Table~\ref{tab:arms} the highest-accuracy arm (\texttt{long\_context}) does no
+pruning at all, and the most precise pruner is not the most accurate arm --- which
+is exactly why the bench reports the two \emph{decoupled} rather than collapsing
+them into a single score.
+
+The starkest illustration is the ground-truth-blind \texttt{random\_pruning}
+control: in Table~\ref{tab:arms} it posts the \emph{highest} non-oracle prune F1,
+yet the \emph{lowest} accuracy of any arm. That F1 is an artifact of aggressive,
+indiscriminate pruning --- it removes most distractors only because it removes
+almost everything (high recall at base-rate precision), discarding signal in the
+same sweep and collapsing downstream accuracy. The full cycle shows the opposite
+profile: high prune \emph{precision} (most of what it evicts is genuine
+distractor, not signal) at lower recall (it leaves many distractors in place), so
+its aggregate F1 sits below the blind control even as its accuracy is far higher. Measured directly, the full
+cycle keeps a far larger fraction of true \texttt{signal} in active memory than
+either the no-sleep baseline or the random control --- the bench's
+signal-retention complement to prune recall, and the signal-protecting retention
+the mechanism predicts --- so the accuracy gain tracks \emph{which} material is
+kept and transferred to the durable store, not a higher summary F1. An arm can win
+the F1 score and still lose the task, which is exactly why the bench reports prune
+quality and accuracy as two numbers rather than one.
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.82\linewidth]{mechanism_pr.pdf}
@@ -84,25 +134,60 @@ highest-precision pruners, which is exactly why the bench reports the two
   \label{fig:mechanism}
 \end{figure}
 
-\subsection{Cost, and the long-context comparison (a first-class negative)}
+\subsection{Cost: the long-context and deployable-control comparisons (first-class negatives)}
 The accuracy-vs-compute frontier (Figure~\ref{fig:pareto}) and the stream-length
 sweep (Figure~\ref{fig:crossover}) carry the most important caveat to the
 positive primary result. The \texttt{long\_context} baseline --- stuffing the
 entire stream into context with no consolidation --- attains the highest raw
-accuracy at the highest token and memory cost. On the cost-adjusted metric
+accuracy at the highest memory footprint (Table~\ref{tab:arms}); in this mock
+regime its realised \emph{token} cost is the lowest tier, because answers come
+from exact-key lookup rather than model inference over the stuffed context --- an
+artifact a real long-context model would not share, as it would pay a token cost
+growing with stream length. On the cost-adjusted metric
 (\SWcrossoverMetric{}, \SWcrossoverTreatment{} vs \SWcrossoverBaseline{}) there
 is \textbf{no crossover} in the swept range $L\in\{\SWcrossoverLengths\}$
 (crossover found=\SWcrossoverFound): the long-context baseline keeps its
-raw-accuracy lead across all tested lengths. This is precisely one of our
+raw-accuracy lead across all tested lengths. We state plainly why this holds in
+the present regime: probe answers are read by exact-key lookup over active memory,
+never from the model (Appendix~\ref{app:hyper}), and \texttt{long\_context} keeps
+every item (unbounded episodic capacity), so it answers every probed key and its
+perfect final accuracy in Table~\ref{tab:arms} is a \emph{tautology of the design}
+rather than a demonstration of long-context reasoning. The absence of a
+cost-adjusted crossover in $L\in\{\SWcrossoverLengths\}$ is therefore structurally
+entailed here, not empirically uncovered: a real long-context model would pay
+tokens that grow with $L$ and would risk the lost-in-the-middle degradation that
+exact-key lookup cannot exhibit, either of which could pull a crossover into the
+swept range. This is precisely one of our
 preregistered negative-result forms --- ``long-context wins below stream length
 $L$'' --- and we report it as a first-class finding, not a footnote: within the
 lengths we could afford to sweep, external consolidation does \emph{not} beat
 stuffing the stream into a long context on raw accuracy, and whether a crossover
 exists at larger $L$ is an open, explicitly unanswered question. The
 contribution here is to \emph{map the cost regime}: consolidation's advantage in
-this bench is a matched-budget, memory-footprint advantage (the consolidated
-arms hold far fewer vectors than \texttt{long\_context} in Table~\ref{tab:arms}),
-not a raw-accuracy win over an unbounded context.
+this bench is a memory-footprint advantage (the consolidated arms hold fewer
+vectors than \texttt{long\_context} in Table~\ref{tab:arms}, the full cycle at
+higher token cost), not a matched-budget result and not a raw-accuracy win over an
+unbounded context.
+
+\paragraph{The treatment is not the best deployable arm.} The same frontier
+carries a second, equally first-class cost finding. \texttt{reflection} --- the
+deployable shallow-synthesis control of \citet{park2023generativeagents},
+\emph{not} a ceiling like \texttt{oracle} or \texttt{long\_context} --- attains
+higher final accuracy than \texttt{full\_dream} at lower token cost and comparable
+memory footprint (Table~\ref{tab:arms}). On the accuracy-versus-token objective of
+the reported Pareto frontier (maximise ACC, minimise tokens;
+Figure~\ref{fig:pareto}), \texttt{full\_dream} is therefore Pareto-dominated by
+\emph{both} \texttt{long\_context} and \texttt{reflection} and sits off the
+non-dominated frontier. We state this with the same prominence as the long-context
+result: the full cycle's confirmed advantage is over the no-sleep and replay-only
+\emph{ablation} arms --- the mechanism question H1 was written to answer --- not
+over the strongest deployable comparator. The picture is a genuine trade-off
+rather than uniform inferiority: on the mechanism-level prune-quality readout the
+full cycle retains higher recall and F1 than \texttt{reflection}
+(Table~\ref{tab:arms}), and what the four-operator cycle alone provides is
+operator-level \emph{decomposability} (each operator independently ablatable,
+Figure~\ref{fig:ablation}) and the consolidation-quality measurement --- not a
+Pareto-superior accuracy-per-token operating point. \MockCaveat
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.82\linewidth]{cost_pareto.pdf}
@@ -124,14 +209,24 @@ not a raw-accuracy win over an unbounded context.
 \end{figure}
 
 \subsection{TMR-style targeting}
-Benchmarking the replay-targeting analogue against the sleep TMR meta-analysis
-\citep{hu2020tmr}, replay-bearing arms show a mean signal-retention lift of
-$\SWtmrLift$ over non-replay arms, a bias-corrected Hedges'
-$g=\SWtmrG$ (95\% CI $[\SWtmrCIlo,\SWtmrCIhi]$), which exceeds the benchmark
-$g\approx\SWtmrBench$ (Figure~\ref{fig:tmr}). We stress the proxy nature of this
-comparison: this is a prioritized-replay \emph{targeting analogue}, not a literal
-cued-TMR protocol, so the comparison is to a benchmark effect size, not a claim
-of biological equivalence.
+Within the mock-LLM regime the replay operator does what it was built to do:
+replay-bearing arms show a mean signal-retention lift of $\SWtmrLift$ over
+non-replay arms (Figure~\ref{fig:tmr}) --- the targeting analogue measurably moves
+signal into the durable store, which is the informative content of this contrast.
+Standardised, the lift is a bias-corrected Hedges' $g=\SWtmrG$ (95\% CI
+$[\SWtmrCIlo,\SWtmrCIhi]$), against a meta-analytic sleep-TMR benchmark of
+$g\approx\SWtmrBench$ \citep{hu2020tmr}. We deliberately do \emph{not} read the
+margin between the two as ``beating'' that benchmark, for two reasons. First, this
+is a prioritized-replay \emph{targeting analogue}, not a literal cued-TMR protocol,
+so any comparison is to a benchmark effect size, not a claim of biological
+equivalence. Second, and more fundamentally, the standardised magnitude arises from
+the same synthetic-mock determinism behind the very large primary $d=\SWprimaryD$
+(Section~\ref{sec:limitations}): a deterministic operator engineered to reinject
+labelled signal will out-score a benchmark drawn from noisy human data almost by
+construction. Under the mock, then, the benchmark comparison cannot, even in
+principle, be meaningfully favourable or unfavourable; what \emph{is} informative
+is the sign of the lift and the demonstration that the operator moves signal as
+designed.
 
 \begin{figure}[t]\centering
   \includegraphics[width=0.75\linewidth]{tmr_targeting.pdf}
@@ -147,9 +242,13 @@ Time-compression does not invert the arm ranking (Figure~\ref{fig:simreal}):
 across key arms the accelerated high-compression sim and the real
 low-compression long-horizon runs agree with Pearson $\SWsimPearson$ and
 Spearman $\SWsimSpearman$ (\SWsimInversions{} inversions), with a maximum
-absolute mean-ACC divergence of $\SWsimMaxDiv$. The ranking is preserved, so the
-accelerated sim is a valid proxy for ordering arms here; the absolute divergence
-is itself reported rather than hidden. For \emph{power}, the realised
+absolute mean-ACC divergence of $\SWsimMaxDiv$. The ranking is preserved across
+the compared arms, but a perfect Spearman over only a few, widely-separated arms
+is weak evidence on its own, and that divergence is itself non-negligible; we
+therefore read this check as \emph{suggestive} that time-compression does not
+invert the coarse ordering here, not as establishing the accelerated sim as a
+validated proxy --- the divergence is reported rather than hidden, and we revisit
+its limits in Section~\ref{sec:limitations}. For \emph{power}, the realised
 $n=\SWpowerN$ seeds clears the floor of \SWpowerFloor; at the observed effect
 ($d=\SWpowerObsD$) a paired design requires only $n\ge\SWpowerReqN$ seeds
 \citep{colas2018seeds}, so the design is amply powered \emph{for an effect this
