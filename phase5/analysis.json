@@ -1,0 +1,143 @@
+{
+  "crossover": {
+    "acc_gap_baseline_minus_treatment": [
+      0.1875,
+      0.2847222222222223,
+      0.3500000000000001,
+      0.35677083333333337,
+      0.3784722222222223
+    ],
+    "acc_per_token_baseline": [
+      0.0023816612086930635,
+      0.0016070711128967456,
+      0.0009098146252701012,
+      0.0005820721769499418,
+      0.00038066235249333843
+    ],
+    "acc_per_token_treatment": [
+      0.0004038772213247173,
+      0.00021800602797250157,
+      0.00011233770442221692,
+      6.78154102969601e-05,
+      4.327321499196906e-05
+    ],
+    "baseline_arm": "long_context",
+    "crossover_found": false,
+    "crossover_length": null,
+    "lengths": [
+      2,
+      3,
+      5,
+      8,
+      12
+    ],
+    "metric": "acc_per_token",
+    "note": "no cost-adjusted crossover in the swept range [2, 3, 5, 8, 12]; long_context dominates on raw accuracy at maximum cost (EC6: absence stated).",
+    "raw_accuracy_crossover_length": null,
+    "treatment_arm": "full_dream"
+  },
+  "exceeds_noise_floor": true,
+  "headline": "Mechanism demonstration under the deterministic mock LLM: CONFIRMED H1 in the 'distractor_heavy' regime (mean paired ACC diff full_dream - no_sleep = +0.379, clears the A/A noise floor). On the long-horizon sweep no long-context crossover appears in the swept range (long_context keeps the raw-accuracy lead at maximum cost); the TMR-style replay-targeting effect is g=1.702 versus the 0.29 benchmark (exceeds); realized N=8 (floor 5 met); the observed effect needs N>=2. These are synthetic + mock-LLM mechanism results, not claims about a real Claude model.",
+  "mock_llm_caveat": "MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+  "n_seeds": 8,
+  "negative": {
+    "applicable": false,
+    "matched_forms": [
+      "Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover)."
+    ],
+    "note": "no negative-result form OVERTURNS H1: the primary endpoint is confirmed and the registered secondary contrast is positive. However, the following preregistered negative pattern(s) ARE observed and reported (see the crossover / EC6 section): 'Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover).'. These concern secondary cost/length trade-offs, not the matched-budget primary contrast.",
+    "regime_tie": "distractor_heavy (signal=0.34, distractor=0.4, noise=0.26)",
+    "secondary_contrasts": {
+      "full_dream vs replay_only": "full_dream > replay_only (delta=+0.371, 95% CI [0.312, 0.425], wilcoxon p=0.014)"
+    }
+  },
+  "noise_floor": 0.0625,
+  "per_regime_verdicts": {
+    "balanced": "confirmed",
+    "distractor_heavy": "confirmed",
+    "signal_rich": "confirmed"
+  },
+  "power": {
+    "floor": 5,
+    "floor_met": true,
+    "n_seeds": 8,
+    "note": "to detect the observed paired d=4.890 at alpha=0.05 (two-sided), power=0.8, Colas et al. (2018) requires n>=2 paired seeds; the run used n=8.",
+    "observed_effect_d": 4.890171661392655,
+    "powered_for_observed": true,
+    "required_n_for_observed": 2
+  },
+  "primary_ci_hi": 0.42916666666666664,
+  "primary_ci_lo": 0.3291666666666666,
+  "primary_ci_method": "percentile",
+  "primary_effect_magnitude": "large",
+  "primary_effect_name": "cohens_d",
+  "primary_effect_value": 4.890171661392655,
+  "primary_endpoint_name": "acc_diff_full_dream_vs_no_sleep",
+  "primary_test_name": "wilcoxon_signed_rank",
+  "primary_test_p": 0.014147403886021545,
+  "primary_value": 0.37916666666666665,
+  "primary_verdict": "confirmed",
+  "sim_real_agreement_note": "sim preserves the real arm ranking (no inversions); pearson=0.981, spearman=1.000, max|mean ACC sim-real|=0.398",
+  "tmr": {
+    "benchmark_g": 0.29,
+    "exceeds_benchmark": true,
+    "g_ci_hi": 2.738782879357599,
+    "g_ci_lo": 1.1398983292160416,
+    "hedges_g": 1.7017214154227076,
+    "mean_lift": 0.28095238095238095,
+    "no_replay_arms": [
+      "no_sleep",
+      "downscale_only"
+    ],
+    "note": "replay arms ['full_dream', 'replay_only', 'reflection'] vs no-replay ['no_sleep', 'downscale_only']: mean signal-retention lift=+0.281, bias-corrected unpaired Hedges' g=1.702 (95% CI [1.140, 2.739], bootstrap on unpaired Cohen's d x Hedges factor). Benchmark Hu et al. (2020) g=0.29: exceeds it. Proxy caveat: this is a prioritized-replay targeting ANALOGUE, not a literal cued-TMR protocol.",
+    "replay_arms": [
+      "full_dream",
+      "replay_only",
+      "reflection"
+    ],
+    "signal_retention_no_replay": [
+      0.2857142857142857,
+      0.2857142857142857,
+      0.2571428571428571,
+      0.3,
+      0.2857142857142857,
+      0.2857142857142857,
+      0.3142857142857143,
+      0.2857142857142857,
+      0.2857142857142857,
+      0.2857142857142857,
+      0.2571428571428571,
+      0.3,
+      0.2857142857142857,
+      0.2857142857142857,
+      0.3142857142857143,
+      0.2857142857142857
+    ],
+    "signal_retention_replay": [
+      0.6714285714285714,
+      0.7142857142857143,
+      0.7,
+      0.7285714285714285,
+      0.7,
+      0.6428571428571429,
+      0.6428571428571429,
+      0.6571428571428571,
+      0.3142857142857143,
+      0.2571428571428571,
+      0.2714285714285714,
+      0.2714285714285714,
+      0.3142857142857143,
+      0.2571428571428571,
+      0.3142857142857143,
+      0.2857142857142857,
+      0.7714285714285715,
+      0.7428571428571429,
+      0.7571428571428571,
+      0.7142857142857143,
+      0.6857142857142857,
+      0.7285714285714285,
+      0.7857142857142857,
+      0.7142857142857143
+    ]
+  }
+}

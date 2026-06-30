@@ -12,7 +12,30 @@ relevance** so the effect can be measured falsifiably. The bench generates the
 data a final scientific paper reports. See [`PRD.md`](PRD.md) for the full
 vision, requirements, and phased roadmap.
 
-## Status: Phase 4 — Evaluation Harness, Control Battery & Preregistration
+## Status: Phase 5 — Experiments, Analysis & Plots
+
+Phase 5 **executes** the preregistered study and records the verdict. One sweep
+runner runs the **arm × distractor-regime × seed** grid (8 seeds, three regimes),
+a **stream-length sweep** for the long-context crossover, and **sim-vs-real**
+(accelerated short/high-compression vs real long/low-compression) runs per key
+arm — every cell written to a manifest with cost + git hash, coverage logged with
+no silent caps. An analysis layer surfaces the single preregistered **primary
+endpoint** exactly as registered (with bootstrap CI, paired Wilcoxon, and Cohen's
+d), states the **H1/H0 verdict** unambiguously, reports the long-context crossover
+(or its absence), the TMR-style replay-targeting effect vs the Hu et al. (2020)
+benchmark, the realized power vs the committed analysis, and the
+negative-result-form mapping. A figures layer regenerates the seven
+publication-grade figures (retention curves with seed bands, the replay×downscale
+ablation, mechanism precision/recall, cost Pareto, the long-context crossover, TMR
+targeting, sim-vs-real agreement) **from the committed result in one command**,
+each caption stating *n* and the CI method. **Honesty by construction:** with no
+`ANTHROPIC_API_KEY` the whole grid runs on the deterministic **mock LLM**, so the
+verdict is a **mechanism demonstration in the synthetic + mock-LLM regime, not a
+claim about a real Claude model** — that caveat rides on every figure and the
+results writeup. One command runs the whole pipeline: `make repro-phase5` (or
+`make repro-figures` to regenerate the figures from the committed result). The
+verdict and tables live in [`paper/RESULTS.md`](paper/RESULTS.md); the
+authoritative interface spec is [`docs/PHASE5_CONTRACT.md`](docs/PHASE5_CONTRACT.md).
 
 Phase 4 wires the whole study into **one harness**: the **nine control arms**
 (`no_sleep`, `replay_only`, `downscale_only`, `random_pruning`, `full_dream`,
@@ -198,6 +221,30 @@ and the temperature-0 stability + memory-drift controls. The statistics are pure
 NumPy (no scipy/rliable needed), so this is fully reproducible and CI-safe. (The
 H1/H0 *decision* on real long-horizon runs is Phase 5; Phase 4 ships the
 instrument and the committed preregistration that binds it.)
+
+### Run the experiment grid, analysis & figures (Phase 5)
+
+```bash
+# Deterministic; hash embeddings + mock LLM by default (no key / heavy deps needed).
+# Figures additionally need matplotlib:  pip install -e ".[viz]"
+make repro-phase5
+# equivalently, the three steps:
+python -m slow_wave.eval.grid     --config configs/phase5_full.yaml --out .
+python -m slow_wave.eval.analysis --result phase5/phase5_result.json --out .
+python -m slow_wave.paper.figures --result phase5/phase5_result.json --out paper/figures
+
+# Regenerate every figure from the COMMITTED result in one command (EC4):
+make repro-figures
+```
+
+The grid runner writes the consolidated `phase5/phase5_result.json` (the committed
+Phase 5 manifest: per-(arm, regime, seed) accuracy + mechanism prune quality +
+cost, the embedded preregistered primary endpoint per regime, the length sweep,
+and the sim-vs-real curves) plus one full per-cell experiment manifest under
+`phase5/regime_<name>/`. The analysis layer writes `phase5/analysis.json` and the
+human-readable [`paper/RESULTS.md`](paper/RESULTS.md); the figures layer writes the
+seven vector-PDF figures + captions to `paper/figures/`. Every artifact is
+byte-reproducible from the same config + seeds under the mock LLM.
 
 ### LLM: real call vs. deterministic mock
 
