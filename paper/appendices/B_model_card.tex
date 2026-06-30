@@ -1,0 +1,46 @@
+\section{Model Card}\label{app:modelcard}
+
+Following \citet{mitchell2019modelcards}. This card covers the two models the
+bench uses: the (frozen) reasoning/summarisation LLM and the local embedding
+model.
+
+\paragraph{Model details.} The configured reasoning and dream-summarisation
+model is \texttt{\SWmodelID} (a pinned Claude snapshot), called with sampling
+temperature $0.0$, \texttt{max\_tokens}~$=64$, \texttt{top\_p} unset, and
+\texttt{effort} unset. \textbf{The runs in this paper used a deterministic mock
+LLM} (\texttt{mocked}=\SWmodelMocked), because no \texttt{ANTHROPIC\_API\_KEY}
+was present on the run machine: the mock returns text fully determined by
+$(\text{model id},\text{system},\text{prompt})$, so the pipeline is
+byte-reproducible. Consequently every number is a \emph{mechanism demonstration},
+not a measurement of the real snapshot (Section~\ref{sec:limitations}). The
+local embedding model is a hash bag-of-words backend (\texttt{hash-bow-v1},
+dimension $384$, version $1.0$); it is deterministic given its input and
+CPU-friendly. (A \texttt{sentence-transformers} backend such as
+\texttt{bge-small-en-v1.5} is supported as a configuration option but was not
+used for these committed runs.)
+
+\paragraph{Intended use.} The models are a measurement vehicle for studying
+external-memory consolidation around a \emph{frozen-weights} agent. Intended use
+is research on the bench's synthetic stream. Out-of-scope: production deployment,
+any use requiring biological fidelity, and any efficacy claim beyond the tested
+synthetic, mock-LLM regime.
+
+\paragraph{Factors and metrics.} Relevant factors are the distractor regime,
+the stream/sampling seed, and the dream-operator configuration. Metrics are the
+continual-learning set (ACC, BWT, FWT, per-task forgetting;
+\citealp{lopezpaz2017gem,chaudhry2018riemannian}), the mechanism-level prune
+precision/recall/F1 and decay-vs-relevance calibration, cost (tokens, memory
+vectors/bytes, p95 latency, wall-clock, sim-time compression), generator
+fidelity/drift, and the TMR-style retention lift.
+
+\paragraph{Training data.} \textbf{None: weights are frozen.} No fine-tuning,
+RLHF, or retraining is performed; ``consolidation'' acts only on the external
+memory. The local embedder is not trained by this project.
+
+\paragraph{Ethical considerations and caveats.} The synthetic stream contains no
+personal or sensitive content (NG5). The dominant caveat is the mock-LLM regime
+(above). For any real-model run, the standing caveats are LLM nondeterminism even
+at temperature~0, eventual snapshot deprecation, and summarisation drift; the
+bench mitigates these with a pinned model id, multi-seed dispersion, a
+temperature-0 stability control, a memory-drift detector, and archived
+transcripts, rather than assuming reproducibility.

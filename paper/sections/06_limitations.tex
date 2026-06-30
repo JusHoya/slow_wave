@@ -1,0 +1,55 @@
+\section{Limitations}\label{sec:limitations}
+
+We state the threats to validity plainly; several bound the claims sharply.
+
+\paragraph{Mock-LLM regime (the dominant caveat).} Every quantitative result in
+this paper was produced under a \emph{deterministic mock LLM}, because no live
+model key was present on the run machine. This is a deliberate honesty-by-design
+choice --- it makes the entire grid byte-reproducible --- but it means the
+results are a \textbf{mechanism demonstration in the synthetic, mock-LLM regime}:
+they show that the apparatus, its operators, its metrics, and its statistics
+behave as designed, and nothing more. They are \emph{not} measurements of a real
+Claude model. In particular, the very large primary effect ($d=\SWprimaryD$) and
+the near-zero dispersion of the stability control are artifacts of a noiseless
+mock summariser; a real model would introduce sampling variance, summarisation
+drift, and refusals that the mock cannot. No efficacy claim about a real model
+should be read into any number here.
+
+\paragraph{Frozen-weights scope.} We study \emph{memory} consolidation for
+\textbf{frozen-weights} agents: the model is never fine-tuned, RLHF'd, or
+retrained, and ``consolidation'' refers entirely to operations on an external
+memory. Findings therefore say nothing about weight-level continual learning,
+and the EWC-spirit protection here is a memory-write flag, not a parameter
+penalty.
+
+\paragraph{Sim-time-compression validity.} Most runs use accelerated ``sim-time''
+cycles for cheap iteration, validated against a few real low-compression
+long-horizon runs. We report the sim-vs-real agreement explicitly
+(Section~\ref{sec:results}): the ranking is preserved here (Spearman
+$\SWsimSpearman$), but the maximum absolute mean-ACC divergence is
+$\SWsimMaxDiv$, which is not negligible. A documented inversion at larger scale
+would be a finding, not a bug; we have not swept far enough to exclude one.
+
+\paragraph{Proprietary-model reproducibility.} Real runs would depend on a
+proprietary model behind an API. LLM calls are nondeterministic even at
+temperature~0, pinned snapshots are eventually deprecated, and exact transcripts
+cannot be guaranteed reproducible across snapshots. We mitigate (pinned model
+id, multi-seed dispersion, a temperature-0 stability control, archived
+transcripts) rather than assume reproducibility, but the caveat is real for any
+non-mock run.
+
+\paragraph{Scenario and domain scope.} Results are confined to a single
+synthetic, task-incremental stream; each stream is tagged with exactly one
+continual-learning scenario and we perform \emph{no} cross-scenario aggregation
+\citep{vandeven2022threetypes}. We do not run a secondary ``second-brain'' domain
+in this version, and the long-context comparison was swept only over
+$L\in\{\SWcrossoverLengths\}$ --- so the absence of a crossover is a statement
+about that range, not a universal claim. External validity to natural data,
+other scenarios, and longer streams is untested.
+
+\paragraph{No biological-fidelity claim.} Neuroscience supplies the bench's
+testable mechanisms and metaphors --- replay, transfer, downscaling, generative
+augmentation, TMR --- and nothing more. We do \emph{not} claim that Slow Wave
+models the brain, that its operators are biologically faithful, or that any
+result transfers to biology. The TMR comparison in particular is to a benchmark
+effect size, via a prioritized-replay analogue, not a cued-reactivation protocol.

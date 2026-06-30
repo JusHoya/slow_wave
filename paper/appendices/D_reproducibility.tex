@@ -1,0 +1,70 @@
+\section{Reproducibility Appendix}\label{app:repro}
+
+This appendix gives the information requested by the NeurIPS reproducibility
+checklist \citep{pineau2021reproducibility}: the pinned model, the full
+hyperparameters and swept grids, the prompts, the per-run manifest schema, and
+the one-command reproduction.
+
+\paragraph{Pinned model and environment.} Reasoning/summarisation model
+\texttt{\SWmodelID} (pinned snapshot), sampling temperature $0.0$,
+\texttt{max\_tokens}~$=64$; runs executed under the deterministic mock LLM
+(\texttt{mocked}=\SWmodelMocked). Local embedder \texttt{hash-bow-v1}, dimension
+$384$. Python $3.12$; package version $0.1.0$; statistics implemented in pure
+NumPy. Committed result at git \texttt{\SWgitCommit}.
+
+\paragraph{Hyperparameters, search ranges, and prompts.} Given in full in
+Appendix~\ref{app:hyper} (stream, memory, dream-engine, and evaluation
+hyperparameters; the three swept grids; and the transfer / augment / reasoning
+prompts).
+
+\paragraph{Per-run manifest schema (FR6.1).} Every run writes a JSON manifest
+whose top-level keys are: \texttt{manifest\_version}, \texttt{experiment},
+\texttt{run\_id}, \texttt{config\_hash}, \texttt{created\_at};
+\texttt{model} (\texttt{id}, \texttt{mocked}, and \texttt{sampling}:
+\texttt{temperature}/\texttt{max\_tokens}/\texttt{top\_p}/\texttt{effort});
+\texttt{llm} (\texttt{model\_id}, \texttt{mocked}, token counts, output
+\texttt{text\_sha256});
+\texttt{embedding} (\texttt{backend}, \texttt{model}, \texttt{version},
+\texttt{dim});
+\texttt{seeds} (master + per-arm derivation) and \texttt{seed\_list};
+\texttt{hyperparameters} and \texttt{search\_ranges};
+\texttt{cost} (\texttt{api\_calls}, \texttt{tokens}.\{input,output,total\},
+\texttt{wall\_clock\_s}, and per-arm memory vectors/bytes, retrieval calls, and
+p95 latency in the results block);
+\texttt{git} (\texttt{commit}, \texttt{branch}, \texttt{dirty});
+\texttt{sim\_time} (\texttt{compression\_factor});
+\texttt{platform}, \texttt{python\_version}, \texttt{package\_version};
+\texttt{results} (the full per-(arm,seed) experiment: $R[i,j]$, continual
+metrics, prune quality, calibration, footprint, statistics, A/A, prereg primary
+endpoint, drift, stability); and
+\texttt{nondeterministic\_fields}, which explicitly lists the fields that may
+vary under a real LLM --- \texttt{created\_at}, \texttt{cost.wall\_clock\_s},
+output token counts, \texttt{llm.text\_sha256}/\texttt{text\_preview}, the git
+fields, and per-step latencies --- so a reader knows exactly which values are not
+byte-stable. (Under the mock LLM even most of these are stable run-to-run; the
+field merely marks what is \emph{permitted} to vary.)
+
+\paragraph{One-command reproduction.} From a clean checkout with the package
+installed (\texttt{pip install -e ".[viz]"}):
+\begin{itemize}
+  \item \textbf{Headline figures} (the EC2 one-command regeneration from the
+  committed result): \texttt{make repro-figures}, i.e.\
+  \texttt{python -m slow\_wave.paper.figures --result phase5/phase5\_result.json
+  --out paper/figures}.
+  \item \textbf{In-text numbers and the per-arm table}:
+  \texttt{make repro-numbers}, i.e.\
+  \texttt{python -m slow\_wave.paper.numbers --result phase5/phase5\_result.json
+  --out paper/generated} (the manuscript \texttt{\textbackslash input}s these, so
+  no number is hand-transcribed).
+  \item \textbf{Full grid + analysis + figures}: \texttt{make repro-phase5}.
+  \item \textbf{The entire manuscript} (numbers + figures + PDF):
+  \texttt{make repro-paper} (\texttt{scripts/build\_paper.sh}).
+\end{itemize}
+Because the grid runs under the deterministic mock LLM when no API key is
+present, every non-LLM artifact is byte-reproducible across runs with the same
+config and seeds; the \texttt{nondeterministic\_fields} list flags everything
+that is not. This is a mechanism-demonstration reproduction
+(Section~\ref{sec:limitations}); a real-model run is reproducible only up to LLM
+nondeterminism, which is why the bench reports dispersion, a temperature-0
+stability control, and a memory-drift detector rather than assuming
+bit-for-bit determinism.

@@ -1,0 +1,27 @@
+\section{Conclusion}\label{sec:conclusion}
+
+Slow Wave is, to our knowledge, the first mechanism-decomposed continual-learning
+bench for LLM-agent memory with controlled distractors and ground-truth
+relevance: an apparatus whose four sleep-inspired operators are independently
+ablatable, a preregistered matched-budget control battery with a
+ground-truth-blind negative control and an oracle ceiling, and a metric suite
+that measures consolidation \emph{quality} --- prune precision and recall against
+known relevance --- decoupled from downstream accuracy. Under a deterministic
+mock LLM the apparatus behaves as designed: the full dream cycle improves final
+accuracy over the no-sleep baseline at matched budget on the preregistered
+endpoint ($\Delta=\SWprimaryDiff$), a replay-targeting analogue exceeds the
+sleep-TMR benchmark, and --- reported with equal weight --- a long-context
+baseline dominates on raw accuracy at maximum cost with no cost-adjusted
+crossover in the swept range. We emphasise that these are mechanism
+demonstrations in the synthetic, mock-LLM regime, not claims about a real Claude
+model, and that neuroscience here is motivation, never proof.
+
+The natural next steps are to run the same preregistered protocol against a real
+frozen-weights model (re-checking whether the matched-budget effect, the TMR
+analogue, and the absence of a long-context crossover survive a real
+summariser's nondeterminism and drift), to sweep longer streams in search of a
+crossover, to add a second ``second-brain'' domain for external validity, and to
+expose the substrate through a production memory tool or MCP for a realism
+variant. The apparatus, preregistration, manifests, and one-command reproduction
+are released so that others can extend the protocol --- and so that a negative
+result, if it comes, is as informative and as reproducible as a positive one.

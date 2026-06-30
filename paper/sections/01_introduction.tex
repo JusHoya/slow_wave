@@ -1,0 +1,82 @@
+\section{Introduction}\label{sec:intro}
+
+As persistent ``second-brain'' agents proliferate, continuous ingestion swamps
+working memory with material that never improves mission performance. The
+dominant engineering response is to enlarge the context window or to stuff
+every trace into a retrieval store, but both strategies scale cost with history
+rather than with relevance. Biology solved an analogous problem with
+\emph{sleep}. Consolidation is not one process but a coordinated sequence:
+replay of recent experience through hippocampal sharp-wave ripples
+\citep{buzsaki1989twostage,buzsaki2015ripples}, systems-level transfer from
+hippocampus to neocortex \citep{mcclelland1995cls,klinzing2019systems}, and a
+synaptic downscaling that renormalises strength while protecting what was
+replayed \citep{tononi2006shy,tononi2014price}. A complementary view holds that
+sleep also actively \emph{forgets} \citep{crick1983dreamsleep,poe2017forgetting}
+and that dreaming aids generalisation \citep{hoel2021overfitted}.
+
+The central scientific bet of this project is that an \emph{engineered analogue}
+of this cycle improves long-horizon agent performance and memory efficiency.
+Crucially, we study this for \textbf{frozen-weights} LLM agents --- the
+realistic deployment regime, in which the model is fixed and only the external
+\emph{memory} is consolidated. We do not fine-tune, do RLHF, or train new
+models; the question is whether \emph{memory} consolidation alone, decomposed
+into biologically-motivated mechanisms, can carry an effect. We frame
+neuroscience strictly as a source of testable mechanisms and metaphors, never
+as evidence of efficacy, and we make no claim that the bench models the brain.
+
+To test the bet falsifiably we built \textbf{Slow Wave}, a test bench rather
+than a demo. Its distinguishing feature is a synthetic continual task stream
+carrying \emph{ground-truth relevance labels} (\texttt{signal} /
+\texttt{distractor} / \texttt{noise}) that are visible to offline scoring only,
+never to the online retrieval or priority path. This single design choice
+unlocks something neither neuroscience nor existing LLM-memory benchmarks can
+measure: the \emph{quality} of consolidation --- the precision and recall with
+which a mechanism discards distractors while retaining signal --- reported
+\emph{decoupled} from downstream task accuracy, since the two can diverge.
+
+We then ask the question the way a skeptic would. The treatment (a full
+four-operator dream cycle) is compared against a battery of \SWnArms{} control
+arms at matched LLM-token, retrieval, and memory budgets, with a single
+\emph{preregistered} primary endpoint, a ground-truth-blind random-pruning
+negative control, an oracle prune ceiling, a long-context baseline (the key
+validity threat), and an A/A control that fixes the noise floor any claimed
+effect must clear. The verdict is recorded whichever way the data fall, and a
+negative or cost-unfavourable result is a first-class, pre-specified outcome.
+
+\paragraph{An honesty caveat, stated up front.} The numbers in this paper were
+produced under a \emph{deterministic mock LLM} (no live model key was present on
+the run machine), so the whole experiment is byte-reproducible. Consequently
+every quantitative result here is a \textbf{mechanism demonstration in the
+synthetic, mock-LLM regime} --- a statement about whether the apparatus and its
+operators behave as designed --- and \emph{not} a scientific claim about a real
+Claude model. We restate this caveat wherever results appear
+(Section~\ref{sec:limitations}).
+
+\paragraph{Contributions.} Concretely, this work contributes:
+\begin{itemize}
+  \item \textbf{An apparatus.} An instrumented, reproducible, \emph{mechanism-decomposed}
+  continual-learning bench for LLM-agent memory: a labelled synthetic stream
+  with controllable distractor regimes and an enforced confound guard (relevance
+  labels are unreachable from any online code path), a physically dual-store
+  memory substrate (episodic / semantic / auditable archival, with salience,
+  provenance, and write-protection), and a four-operator dream engine
+  (\emph{replay}, \emph{transfer}, \emph{downscale}, \emph{generative-augment})
+  whose operators are independently ablatable in a two-phase (NREM\,$\to$\,REM)
+  cycle.
+  \item \textbf{A protocol.} A preregistered, matched-budget experimental design
+  with a \SWnArms{}-arm control battery (including a ground-truth-blind negative
+  control, an oracle ceiling, a long-context baseline, and an A/A noise floor),
+  a metric suite that reports continual-learning metrics (ACC/BWT/FWT/forgetting)
+  \emph{and} mechanism-level prune precision/recall/F1 against ground-truth
+  relevance, and a statistics suite with bootstrap CIs, robust aggregates,
+  paired and omnibus tests, effect sizes, and multiple-comparison correction.
+  \item \textbf{Ablation results, including negatives.} Under the mock-LLM
+  mechanism-demonstration regime: a confirmed matched-budget improvement of the
+  full dream cycle over the no-sleep baseline on the primary endpoint
+  ($\Delta=\SWprimaryDiff$); a replay-targeting effect that exceeds a
+  targeted-memory-reactivation benchmark; \emph{and}, reported with equal weight,
+  the finding that a long-context baseline dominates on raw accuracy at maximum
+  cost with \emph{no} cost-adjusted crossover in the swept stream lengths ---
+  mapping the cost regime in which external consolidation is, and is not, worth
+  paying for.
+\end{itemize}

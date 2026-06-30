@@ -1,0 +1,64 @@
+\section{Hyperparameters, Search Ranges, and Prompts}\label{app:hyper}
+
+All values are taken from the committed experiment config
+(\texttt{configs/phase5\_full.yaml}) and the run manifests.
+
+\paragraph{Stream and memory.} Scenario \texttt{task-incremental}; $5$ tasks
+$\times$ $40$ items; $8$ subjects/task, $4$ attributes, $12$ values, $6$
+probes/task; distractor namespace $64$, noise vocabulary $128$, $8$ noise
+tokens; contradiction rate $0$, drift $0$, recency bias $0$. Episodic capacity
+$60$ (bounded, so the no-sleep baseline forgets); archival tier enabled;
+retrieval policy recency\,$\times$\,importance\,$\times$\,relevance with
+top-$k=16$ and recency half-life $64$.
+
+\paragraph{Dream engine.} All four operators enabled in \texttt{full\_dream}:
+replay (strategy \emph{prioritized}, sample size $24$), transfer (batch size
+$8$, CLS interleaving on at ratio $0.5$), downscale (decay function
+\emph{exponential}, re-potentiation boost $1.5$), generative-augment
+($4$ pseudo-episodes/cycle, kinds cycling through paraphrase / abstraction /
+counterfactual). Conflict/unlearning off; sleep every $1$ task; sleep-pressure
+mode \emph{fixed}.
+
+\paragraph{Evaluation.} Nine arms (Section~\ref{sec:protocol}); seeds
+$\{0,\dots,7\}$ ($n=\SWnSeeds$); matched budget on with tolerance $0.15$;
+$10{,}000$ bootstrap resamples at the $0.95$ CI level; stats seed $0$; stability
+repeats $3$; drift rounds $3$; A/A reference arm \texttt{no\_sleep}; treatment
+\texttt{full\_dream}; baseline \texttt{no\_sleep}; primary endpoint
+\texttt{\SWprimaryEndpoint}.
+
+\paragraph{Search ranges / swept grids.} The study sweeps three explicit grids
+(the manifest \texttt{search\_ranges} block is empty because the sweep is
+expressed as the grids below, each enumerated and logged with no silent caps):
+\begin{itemize}
+  \item \textbf{Distractor regimes} (signal / distractor / noise): signal-rich
+  $0.70/0.20/0.10$, balanced $0.50/0.30/0.20$, distractor-heavy
+  $0.34/0.40/0.26$ (the preregistered primary regime).
+  \item \textbf{Stream-length sweep} (long-context crossover):
+  $L\in\{\SWcrossoverLengths\}$ over key arms
+  \{\texttt{full\_dream}, \texttt{long\_context}, \texttt{no\_sleep}\}.
+  \item \textbf{Sim-vs-real}: accelerated sim ($\SWsimNtasksSim$ tasks,
+  compression $\approx\SWsimCompression\times$) vs.\ real long-horizon
+  ($\SWsimNtasksReal$ tasks, compression $1\times$) over key arms
+  \{\texttt{full\_dream}, \texttt{no\_sleep}, \texttt{long\_context}\}.
+\end{itemize}
+
+\paragraph{Prompts.} The dream \emph{transfer} (NREM distillation) prompt is
+built deterministically per batch:
+\begin{quote}\small\ttfamily
+You are consolidating recent episodic observations into durable, generalizable
+semantic memory during a sleep cycle.\\[2pt]
+New observations to consolidate:\\
+\ \ 1. <observation>\ \ldots\\[2pt]
+Prior consolidated knowledge (context only --- do not rewrite):\\
+\ \ 1. <prior entry>\ \ldots\ \ (only when CLS interleaving is on)\\[2pt]
+Write one concise paragraph that distills the new observations, integrating them
+with the prior knowledge without contradicting it.
+\end{quote}
+The \emph{generative-augment} (REM) prompt for each selected source is
+\texttt{"<kind> of: <source content>"}, where \texttt{<kind>} cycles through
+\texttt{paraphrase}, \texttt{abstraction}, \texttt{counterfactual}. The per-task
+agent \emph{reasoning} prompt is \texttt{"Review the recent observations and note
+any facts worth remembering."} (optionally suffixed with retrieved memory
+context); this call is for telemetry/realism only --- probe answers are read
+deterministically from memory by exact-key lookup, never from the LLM, which is
+what keeps the mock-LLM pipeline byte-reproducible.

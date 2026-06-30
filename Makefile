@@ -7,7 +7,7 @@
 #
 # (Recipe lines below are TAB-indented, as POSIX make requires.)
 
-.PHONY: setup test repro-smoke repro-stream repro-agent repro-dream repro-eval repro-phase5 repro-figures lint
+.PHONY: setup test repro-smoke repro-stream repro-agent repro-dream repro-eval repro-phase5 repro-figures repro-numbers repro-paper lint
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -53,6 +53,18 @@ repro-phase5:
 # from the COMMITTED Phase 5 result manifest in one command — no re-run needed.
 repro-figures:
 	python -m slow_wave.paper.figures --result phase5/phase5_result.json --out paper/figures
+
+# Phase 6: regenerate the manuscript's in-text number macros + per-arm results
+# table from the COMMITTED Phase 5 result (every paper number is regenerable;
+# EC2/EC8). Writes paper/generated/numbers.tex + paper/generated/arm_metrics_table.tex.
+repro-numbers:
+	python -m slow_wave.paper.numbers --result phase5/phase5_result.json --out paper/generated
+
+# Phase 6: one-command manuscript build -- regenerate numbers + figures from the
+# committed result, then compile paper/main.tex -> paper/main.pdf (needs a LaTeX
+# toolchain: latexmk + pdflatex + bibtex). See scripts/build_paper.sh.
+repro-paper:
+	bash scripts/build_paper.sh
 
 lint:
 	python -c "import slow_wave; print(slow_wave.__version__)"

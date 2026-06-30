@@ -13,5 +13,6 @@ lazily inside the rendering function bodies (the matplotlib/CI rule), so importi
 from __future__ import annotations
 
 from slow_wave.paper.figures import FIGURES, generate_all_figures
+from slow_wave.paper.numbers import generate_all_numbers
 
-__all__ = ["FIGURES", "generate_all_figures"]
+__all__ = ["FIGURES", "generate_all_figures", "generate_all_numbers"]

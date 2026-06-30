@@ -1,0 +1,44 @@
+\title{\textbf{Slow Wave}: A Mechanism-Decomposed Test Bench for
+Sleep-Inspired \emph{Memory Consolidation} in \emph{Continual-Learning}
+\emph{LLM Agents}}
+
+\author{The Slow Wave Project}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+Long-running, frozen-weights large language model (LLM) agents ingest far more
+data than ever affects mission performance. Biology faces an analogous problem
+and answers it with \emph{sleep}: an offline cycle that replays recent
+experience, consolidates episodic traces into durable semantic memory, and
+downscales low-value synapses while protecting salient ones. We ask whether an
+engineered analogue of this \emph{sleep/dream} cycle improves long-horizon
+\emph{continual learning} for an \emph{LLM agent} whose weights are frozen ---
+i.e.\ whether \emph{memory consolidation}, not weight update, can carry the
+effect. We build \textbf{Slow Wave}, an instrumented, reproducible test bench:
+a synthetic continual task stream with injected distractors and
+\emph{ground-truth relevance labels}, a dual-store (episodic/semantic/archival)
+memory substrate, and a four-operator dream engine (replay, transfer,
+downscale, generative-augment) whose operators are independently ablatable. A
+preregistered, matched-budget control battery of \SWnArms{} arms --- including a
+ground-truth-blind random-pruning negative control, an oracle prune ceiling, a
+long-context baseline, and an A/A noise floor --- is run over an
+arm\,$\times$\,regime\,$\times$\,seed grid (\SWnCells{} cells,
+\SWnSeeds{} seeds). Beyond downstream accuracy we measure consolidation
+\emph{quality} directly: precision/recall/F1 of discarding distractors versus
+retaining signal. \textbf{All reported numbers are a mechanism demonstration
+produced under a deterministic mock LLM in the synthetic stream, and are not
+claims about a real Claude model.} In this regime the full dream cycle improves
+final average accuracy over the no-sleep baseline at matched budget (paired
+$\Delta=\SWprimaryDiff$, 95\% CI $[\SWprimaryCIlo,\SWprimaryCIhi]$); a replay-targeting
+analogue exceeds a sleep-targeted-memory-reactivation benchmark; and, reported
+as a first-class finding, a long-context baseline dominates on raw accuracy at
+maximum cost with no cost-adjusted crossover in the swept stream lengths. We
+treat negative and cost-unfavourable patterns with the same rigor as the
+positive result, and release the apparatus, preregistration, manifests, and a
+one-command reproduction of every figure and number.
+\end{abstract}
+
+\noindent\textbf{Keywords:} memory consolidation; continual learning; LLM
+agents; sleep/dream; experience replay; catastrophic forgetting; synaptic
+homeostasis; preregistration; reproducibility.
