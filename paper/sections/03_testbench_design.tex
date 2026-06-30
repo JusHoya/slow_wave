@@ -1,0 +1,84 @@
+\section{Test-Bench Design}\label{sec:design}
+
+Slow Wave is organised as an experiment harness that drives a wake agent, a
+dream engine, and a dual-store memory substrate over a synthetic stream, writing
+a self-describing manifest for every run. We summarise each component; full
+hyperparameters, prompts, and the manifest schema are in
+Appendices~\ref{app:hyper} and~\ref{app:repro}.
+
+\paragraph{Synthetic continual task stream.} The generator emits a long, ordered
+stream of tasks and ingest items, each carrying exactly one \emph{ground-truth
+relevance label} --- \texttt{signal} (mission-relevant), \texttt{distractor}
+(plausible but irrelevant), or \texttt{noise} (random). Distractor regimes
+(e.g.\ signal-rich, balanced, distractor-heavy), temporal structure, and
+explicit \emph{contradictions} (items that conflict with earlier signal) are
+controllable, and the stream is byte-deterministic given a seed. Each stream is
+tagged with exactly one continual-learning scenario
+\citep{vandeven2022threetypes}, and ships a Gebru-style datasheet
+(Appendix~\ref{app:datasheet}; \citealp{gebru2021datasheets}) and a held-out
+probe set that decouples evaluation from the online stream and yields the
+accuracy matrix $R[i,j]$ (accuracy on task $j$ after learning through task $i$).
+The decisive design rule is a \emph{confound guard}: ground-truth labels are
+available to offline scoring only and are statically unreachable from any online
+retrieval or priority code path, preventing an ``oracle-replay'' leak. This is
+enforced in code and asserted by test.
+
+\paragraph{Dual-store memory substrate.} Following CLS
+\citep{kumaran2016cls,mcclelland1995cls}, memory is physically split into a fast,
+append-only \textbf{episodic} buffer (timestamped raw wake traces, locally
+embedded) and a slow, compressed \textbf{semantic} store, plus an auditable
+\textbf{archival} tier. Each item carries a salience weight and metadata
+(recency, access count, novelty as embedding distance to consolidated memory,
+surprise, and a provenance pointer to source episodes). Retrieval is the
+recency\,$\times$\,importance\,$\times$\,relevance policy of
+\citet{park2023generativeagents}. Forgetting \emph{demotes} items to the
+archival tier rather than hard-deleting, so eviction is auditable and reversible;
+and consolidated high-importance memories carry an EWC-spirit write-protection
+flag \citep{kirkpatrick2017ewc}, so a later distractor silently overwriting a
+protected fact is a logged failure event.
+
+\paragraph{Wake agent.} The wake loop ingests stream items, attempts tasks,
+appends episodic traces, retrieves from memory, and calls the LLM for reasoning.
+No semantic-store writes occur during wake --- writes are gated to scheduled
+sleep windows --- so the no-sleep configuration is a genuine
+catastrophic-forgetting reference. The agent emits, per task, the data to
+populate $R[i,j]$ plus token, compute, and latency telemetry, and self-moderates
+against a token budget that the harness also enforces as a ceiling.
+
+\paragraph{The dream engine: four ablatable operators.} The engine runs a
+two-phase (NREM-like\,$\to$\,REM-like) cycle, with each operator an independent
+config toggle:
+\begin{itemize}
+  \item \textbf{Replay} re-samples, re-embeds, and re-scores a subset of recent
+  episodics in compressed batches. Sampling is \emph{uniform} (the DQN baseline;
+  \citealp{mnih2015dqn}) or \emph{prioritized} by
+  recency\,$\times$\,relevance\,$\times$\,novelty\,$\times$\,surprise, with
+  importance-sampling weights logged \citep{schaul2016per}.
+  \item \textbf{Transfer} uses LLM ``dream'' summarisation to distill sampled
+  episodics into durable semantic entries (episodic\,$\to$\,semantic promotion),
+  enforcing CLS \emph{interleaving} (each batch mixes new episodes with sampled
+  prior consolidated memories); removing interleaving is the on-purpose
+  catastrophic-interference condition. Provenance is preserved.
+  \item \textbf{Downscale} multiplies every item's salience by a factor below one
+  (global renormalisation, the SHY analogue;
+  \citealp{tononi2006shy,tononi2014price}), then re-potentiates only replayed
+  items --- ``decay all, protect signal.'' The decay function is swappable among
+  exponential, Weibull, and ACT-R activation decay.
+  \item \textbf{Generative-augment} (REM-like) synthesises paraphrases,
+  counterfactuals, and abstractions (pseudo-episodes) from episodics, the LLM
+  analogue of generative replay \citep{shin2017generativereplay} and world-model
+  imagination \citep{ha2018worldmodels}; generator fidelity/drift is tracked per
+  cycle.
+\end{itemize}
+Semantic writes occur \emph{only} inside scheduled sleep windows (gating; a
+``continuous online writes'' comparison condition exists), a sleep-pressure
+controller can scale cycle frequency and downscaling magnitude to accumulated
+wake churn, and an optional conflict/unlearning step demotes (never destroys)
+contradictions in the Crick--Mitchison spirit \citep{crick1983dreamsleep}.
+
+\paragraph{Reproducibility substrate.} Every run emits a JSON manifest recording
+the exact model id and sampling params, embedding model/version/dimension, all
+hyperparameters and search ranges, the seed list, the git commit hash,
+wall-clock and token/compute cost, and the sim-time compression factor; figures
+and numbers are regenerated from these manifests by committed scripts
+(Section~\ref{sec:repro}, Appendix~\ref{app:repro}).

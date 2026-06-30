@@ -1,0 +1,96 @@
+\section{Related Work}\label{sec:related}
+
+\paragraph{Sleep, replay, and synaptic homeostasis (neuroscience).}
+Two-stage models of memory \citep{buzsaki1989twostage} and the complementary
+learning systems (CLS) account \citep{mcclelland1995cls} motivate a fast
+episodic store that is gradually consolidated into a slow semantic store, a
+transfer associated with sharp-wave ripples \citep{buzsaki2015ripples} and with
+sleep more broadly \citep{diekelmann2010memory,rasch2013sleep,klinzing2019systems}.
+The Synaptic Homeostasis Hypothesis (SHY) proposes that sleep renormalises
+synaptic strength downward, preserving signal-to-noise
+\citep{tononi2006shy,tononi2014price,tononi2020downselection}; complementary
+proposals cast sleep as active forgetting \citep{crick1983dreamsleep,poe2017forgetting}
+and dreaming as a generalisation aid \citep{hoel2021overfitted}. Targeted memory
+reactivation (TMR) experiments show that cueing specific memories during sleep
+improves their retention, with a meta-analytic effect of Hedges'
+$g\approx\SWtmrBench$ \citep{hu2020tmr}; we benchmark a replay-\emph{targeting}
+analogue against this number (Section~\ref{sec:results}). We use these results
+as sources of testable mechanisms only, not as evidence that any engineered
+system reproduces biology.
+
+\paragraph{Replay, world models, and continual learning (DeepMind and the
+broader field).} Experience replay is central to deep reinforcement learning:
+DQN trains from a replay buffer \citep{mnih2015dqn}, and prioritized experience
+replay re-samples transitions by TD-error with importance-sampling corrections
+\citep{schaul2016per} --- both from DeepMind, and the direct ancestors of our
+uniform and prioritized replay operators. MERLIN couples an agent to an
+unsupervised predictive memory \citep{wayne2018merlin}, and the CLS-for-AI
+program argues that intelligent agents need exactly such complementary fast/slow
+systems \citep{kumaran2016cls,hassabis2017neuroai}. World-model agents
+``imagine'' rollouts from a learned latent model
+\citep{ha2018worldmodels,hafner2020dreamer,hafner2025dreamerv3,bruce2024genie},
+the inspiration for our generative-augment (REM-like) operator. On the learning
+side, EWC protects important weights against catastrophic forgetting
+\citep{kirkpatrick2017ewc} (with a noted correction
+\citealp{huszar2018ewcnote}), CLEAR mixes on- and off-policy replay
+\citep{rolnick2019clear}, deep generative replay rehearses synthesised samples
+\citep{shin2017generativereplay}, and brain-inspired replay scales the idea
+\citep{vandeven2020brainreplay}. Our bench borrows the \emph{mechanisms} from
+this lineage but applies them to an external memory around a frozen-weights LLM,
+not to network weights.
+
+\paragraph{LLM-agent memory.} Generative Agents introduced a memory stream
+scored by recency, importance, and relevance \citep{park2023generativeagents},
+which we adopt as the baseline retrieval policy; its shallow ``reflection''
+synthesis is one of our control arms. MemGPT frames context management as an
+operating system \citep{packer2023memgpt}, and Mem0 targets production long-term
+memory \citep{chhikara2025mem0}. The competing non-consolidation strategy is
+simply to enlarge the context window, now feasible with million-token models
+\citep{gemini2024}; our \texttt{long\_context} arm embodies it. Long-horizon memory is evaluated by LoCoMo
+\citep{maharana2024locomo} and LongMemEval \citep{wu2025longmemeval}, and the
+space is surveyed in \citet{zhang2025memorysurvey}. The closest published
+precedent is Letta's \emph{sleep-time compute}, which splits anticipatory
+``sleep-time'' work from test-time inference \citep{lin2025sleeptime}; Slow Wave
+differs by optimising and \emph{measuring} consolidation quality and forgetting
+fidelity under known ground-truth relevance, rather than anticipated-query
+compute. A concurrent, sleep-framed consolidation preprint exists but is, by our
+audit, a recent, near-uncited single-author manuscript whose strong claims we
+have not independently verified; we cite it only as an unverified prior-art
+signal \citep[unverified;][]{xie2026forget}.
+
+\paragraph{Relationship to Anthropic's production features.} Anthropic ships
+\emph{online, automatic} context-management primitives that map onto individual
+operations Slow Wave performs offline and ablatably. The \emph{memory tool}
+provides a client-side file store that persists across sessions and is read back
+just-in-time \citep{anthropic_memorytool} --- a persistence/replay substrate.
+\emph{Context editing} clears stale tool results at a token threshold
+\citep{anthropic_contextediting}, an online analogue of prune/downscale; together
+they are reported to reduce tokens and improve agentic search
+\citep{anthropic_contextmgmt}. Broader context-engineering guidance
+\citep{anthropic_contextengineering} and agent-construction guidance
+\citep{schluntz2024agents,hadfield2025multiagent} situate the practice, and the
+Claude Agent SDK supplies project memory, subagents, and resumable sessions
+\citep{anthropic_agentsdk}, while the Model Context Protocol standardises tool
+access \citep{anthropic_mcp}. The key differentiation: these features fire
+\emph{reactively at token thresholds} with \emph{bundled, non-ablatable}
+behaviour and \emph{no ground-truth relevance signal}, whereas Slow Wave is a
+\emph{scheduled, offline, mechanism-decomposed} study that measures consolidation
+quality against known relevance. (Anthropic's broader alignment line, e.g.\
+Constitutional AI \citep{bai2022cai}, is tangential to memory but situates the
+platform we target.)
+
+\paragraph{Evaluation, statistics, and reproducibility.} We adopt
+continual-learning metrics --- average accuracy, backward and forward transfer
+\citep{lopezpaz2017gem}, the per-task Forgetting Measure
+\citep{chaudhry2018riemannian}, and the broader metric set of
+\citet{diazrodriguez2018metrics} --- and tag each stream with exactly one of the
+three incremental-learning scenarios \citep{vandeven2022threetypes} with no
+cross-scenario aggregation. Methodologically we follow the reproducibility and
+statistics literature: report dispersion not point estimates
+\citep{henderson2018rldrl}, justify seed counts by power analysis
+\citep{colas2018seeds}, use robust aggregates with stratified bootstrap CIs
+\citep{agarwal2021rliable}, apply nonparametric multi-classifier tests
+\citep{demsar2006statistical}, embrace negative results as publishable
+\citep{karl2024negative}, follow reproducibility guidance
+\citep{pineau2021reproducibility}, and document data and model with a datasheet
+\citep{gebru2021datasheets} and a model card \citep{mitchell2019modelcards}.

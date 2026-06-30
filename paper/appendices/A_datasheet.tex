@@ -1,0 +1,52 @@
+\section{Datasheet for the Synthetic Stream}\label{app:datasheet}
+
+Following \citet{gebru2021datasheets}. The bench emits a fresh datasheet per
+stream; the fields below describe the streams used in this paper (the
+distractor-heavy primary regime; other regimes differ only in label mix).
+
+\paragraph{Motivation.} The dataset is a \emph{synthetic continual task stream}
+created to measure the quality of memory consolidation against known
+ground-truth relevance --- the only substrate on which pruning precision/recall
+is directly measurable and confounds are controllable. It was created by the
+Slow Wave project for this study; no external funding or third party is involved.
+
+\paragraph{Composition.} Each instance is either a \emph{task} or an
+\emph{ingest item}. Every item carries exactly one ground-truth relevance label
+$\in\{\texttt{signal},\texttt{distractor},\texttt{noise}\}$. \texttt{signal}
+items are $(\text{subject},\text{attribute},\text{value})$ facts that answer
+probe queries; \texttt{distractor} items are plausible but mission-irrelevant
+facts drawn from a separate namespace; \texttt{noise} items are random tokens
+with no fact. A stream has $n\_\text{tasks}=5$ tasks of
+$\text{items\_per\_task}=40$ items (200 items) in the primary configuration,
+with $8$ subjects/task, $4$ attributes, $12$ values, a distractor namespace of
+$64$, and a noise vocabulary of $128$. The label mix for the primary
+(distractor-heavy) regime is signal $0.34$ / distractor $0.40$ / noise $0.26$.
+A held-out probe set ($6$ probes/task) is decoupled from the online stream. The
+dataset is self-contained and synthetic; it contains no personal, sensitive, or
+confidential data (Non-Goal NG5).
+
+\paragraph{Collection / generation process.} Items are generated procedurally
+and are \emph{byte-deterministic given a stream seed}: the same seed yields a
+byte-identical stream and datasheet. Temporal structure (recency bias, drift)
+and contradiction rate are configurable (all $0$ in the primary configuration).
+Each stream is tagged with exactly one continual-learning scenario
+(here \texttt{task-incremental}; \citealp{vandeven2022threetypes}); no
+cross-scenario mixing is permitted.
+
+\paragraph{Labeling and the confound guard.} Ground-truth relevance labels are
+assigned at generation time and stored in an \emph{offline-only} label sidecar.
+A confound guard (functional requirement FR1.6) enforces --- in code, asserted
+by test, and checked by an import firewall --- that these labels are unreachable
+from any online retrieval or priority code path, preventing an oracle-replay
+leak. Only offline scoring may read them.
+
+\paragraph{Uses.} The stream supports continual-learning evaluation (the
+accuracy matrix $R[i,j]$), mechanism-level prune-quality scoring (precision /
+recall / F1 of discarding distractors vs.\ retaining signal), and cost/footprint
+measurement. It is \emph{not} intended as a natural-language benchmark and makes
+no claim of external validity to natural data.
+
+\paragraph{Distribution and maintenance.} The generator, configs, and the
+committed run manifests ship with the repository; any stream is regenerable from
+its seed and config. The datasheet emitter is versioned with the codebase; the
+authoritative interface is documented in the repository's Phase~1 contract.

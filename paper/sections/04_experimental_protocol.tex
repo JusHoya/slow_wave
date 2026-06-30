@@ -1,0 +1,82 @@
+\section{Experimental Protocol}\label{sec:protocol}
+
+\paragraph{Preregistration.} Before the experiment grid was run, a
+registered-report-style artifact was committed to version control naming the
+hypotheses, the single primary endpoint, the seed plan and power analysis, the
+statistical tests, and explicit rejection criteria (Appendix~\ref{app:repro};
+\citealp{pineau2021reproducibility}). The analysis code reads the preregistered
+primary endpoint and refuses to compute any other, so falsifiability is visible
+in the code. The hypotheses are: \textbf{H1} --- at matched LLM-token,
+retrieval, and memory budgets, the full four-operator dream cycle
+(\texttt{full\_dream}) yields higher final average accuracy (ACC) than the
+no-sleep baseline (\texttt{no\_sleep}) on a distractor-heavy stream, with the
+paired per-seed difference strictly positive and its bootstrap 95\% CI excluding
+zero; \textbf{H0} --- no such improvement, or an effect not exceeding the A/A
+noise floor. The \textbf{primary endpoint} is
+\texttt{\SWprimaryEndpoint}: the paired (by seed) difference in final ACC between
+\texttt{full\_dream} and \texttt{no\_sleep}, aggregated as the mean paired
+difference, with a bootstrap 95\% CI, a paired Wilcoxon signed-rank test, and a
+standardised effect size; the effect must also exceed the A/A noise floor to
+count as confirmed.
+
+\paragraph{Control battery.} \SWnArms{} arms share one harness at matched
+budgets: \texttt{no\_sleep} (wake-only baseline), \texttt{replay\_only},
+\texttt{downscale\_only}, \texttt{random\_pruning} (a ground-truth-blind negative
+control), \texttt{full\_dream} (treatment), \texttt{reflection} (the
+shallow-synthesis control of \citealp{park2023generativeagents}), \texttt{oracle}
+(prune exactly the injected distractors using the held-out labels --- a ceiling,
+not a deployable arm), \texttt{long\_context} (the entire stream stuffed into a
+long context with no consolidation --- the key validity threat), and \texttt{aa}
+(two identical configs differing only in seed --- the noise floor any claimed
+effect must exceed). A matched-budget controller equalises LLM tokens, retrieval
+calls, and final memory-vector count across arms within tolerance and records
+the actuals; where matching is impossible we report an accuracy-vs-compute
+Pareto frontier instead of a single matched point.
+
+\paragraph{Metrics.} From $R[i,j]$ we compute average accuracy, backward and
+forward transfer \citep{lopezpaz2017gem}, and the per-task Forgetting Measure
+\citep{chaudhry2018riemannian}. The bench's distinctive measurement is
+\emph{mechanism-level}: precision, recall, and F1 of consolidation at discarding
+distractors versus retaining signal, plus a calibration curve of embedding-decay
+against true relevance --- reported \emph{decoupled} from downstream accuracy.
+We also record cost (memory footprint in vectors and bytes, test-time tokens,
+p95 latency, wall-clock, and sim-time compression factor;
+\citealp{diazrodriguez2018metrics}), generator fidelity/drift of dream
+summaries, and a TMR-style retention lift for the force-replayed labelled subset
+benchmarked against the meta-analytic $g\approx\SWtmrBench$ of
+\citet{hu2020tmr}.
+
+\paragraph{Statistics.} We vary both the stream-generation seed and the
+agent/LLM sampling seed, with $n=\SWnSeeds$ seeds per arm (floor of
+\SWpowerFloor; \citealp{colas2018seeds}). We report stratified bootstrap 95\%
+CIs and \texttt{rliable} robust aggregates (IQM, performance profiles,
+probability of improvement; \citealp{agarwal2021rliable}); paired Wilcoxon
+signed-rank tests for arm-vs-baseline contrasts and a Friedman omnibus with
+post-hoc comparisons for the multi-arm family \citep{demsar2006statistical};
+standardised effect sizes with CIs; and Holm--Bonferroni multiple-comparison
+correction across the arm-vs-control family. The statistics layer is implemented
+in pure NumPy so the pipeline reproduces without heavyweight dependencies.
+
+\paragraph{Bias controls.} Metric computation is blind (labels are offline
+only). LLM nondeterminism is mitigated by a pinned model id, multi-seed
+dispersion, and a temperature-0 \emph{stability} control that quantifies
+run-to-run variance of the dream summariser; a \emph{memory-drift} detector
+flags when repeated summarisation degrades rather than distills memory. The A/A
+control fixes the noise floor.
+
+\paragraph{Grid, length sweep, and sim-vs-real.} The full grid spans the
+\SWnArms{} arms $\times$ \SWnRegimes{} distractor regimes $\times$ \SWnSeeds{}
+seeds (\SWnCells{} cells; \SWnDropped{} dropped, logged with no silent caps). A
+separate \emph{stream-length sweep} over $L\in\{\SWcrossoverLengths\}$ probes the
+long-context crossover, and a \emph{sim-vs-real} comparison runs each key arm at
+an accelerated high-compression setting (\SWsimNtasksSim{} tasks, compression
+$\approx\SWsimCompression\times$) and at a real low-compression long-horizon
+setting (\SWsimNtasksReal{} tasks) to test whether time-compression distorts
+retention curves.
+
+\paragraph{Regime of these results.} The grid was executed under a
+\emph{deterministic mock LLM} (no live model key on the run machine). This makes
+every artifact byte-reproducible but means the results are a \textbf{mechanism
+demonstration in the synthetic, mock-LLM regime}, not a measurement of a real
+Claude model. We carry this caveat into every result
+(Sections~\ref{sec:results},~\ref{sec:limitations}).

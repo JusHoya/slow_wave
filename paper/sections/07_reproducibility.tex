@@ -1,0 +1,25 @@
+\section{Reproducibility}\label{sec:repro}
+
+We follow the NeurIPS reproducibility program and its checklist
+\citep{pineau2021reproducibility}. Every run emits a JSON manifest recording the
+exact model id and sampling parameters, the embedding model, version, and
+dimension, all hyperparameters and search ranges, the seed list, the git commit
+hash, wall-clock and token/compute cost, and the sim-time compression factor
+(the full schema is enumerated in Appendix~\ref{app:repro}). Every figure and
+every in-text number in this paper is regenerated from the committed Phase~5
+result by a script: the figures by \texttt{slow\_wave.paper.figures} and the
+numbers and the per-arm table (Table~\ref{tab:arms}) by
+\texttt{slow\_wave.paper.numbers}, which the manuscript \texttt{\textbackslash
+input}s rather than hard-coding values. The headline figures regenerate in one
+command (\texttt{make repro-figures}), the full grid + analysis + figures in
+\texttt{make repro-phase5}, and the entire manuscript --- numbers, figures, and
+PDF --- in \texttt{make repro-paper} (\texttt{scripts/build\_paper.sh}). Because
+the grid runs under a deterministic mock LLM when no API key is present, all
+non-LLM artifacts (embeddings, sampling order, file layout, metrics) are
+byte-reproducible across runs with the same config and seeds; any
+LLM-dependent field is flagged as such in the manifest. The preregistration,
+datasheet, model card, prompts, hyperparameters, and manifest schema are
+provided in Appendices~\ref{app:datasheet}--\ref{app:repro}. We note the
+standing caveat for any \emph{real}-model run: LLM nondeterminism and snapshot
+deprecation mean transcripts are mitigated, not guaranteed reproducible
+(Section~\ref{sec:limitations}).
