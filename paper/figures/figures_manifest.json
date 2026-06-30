@@ -1,0 +1,37 @@
+{
+  "ablation_table": {
+    "caption": "Ablation summary in the primary regime: the replay x downscale 2x2 (no_sleep / replay_only / downscale_only / full_dream) as a mean-ACC heatmap, beside per-arm mean ACC. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "ablation_table.pdf",
+    "png": "ablation_table.png"
+  },
+  "cost_pareto": {
+    "caption": "Accuracy vs compute (total tokens) per arm in the primary regime; the Pareto-non-dominated frontier (max ACC, min tokens) is highlighted. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "cost_pareto.pdf",
+    "png": "cost_pareto.png"
+  },
+  "long_context_crossover": {
+    "caption": "Long-context crossover (EC6): acc-per-token (mean ACC / mean tokens, the preregistered metric) for treatment vs baseline across stream length L. no cost-adjusted crossover in the swept range. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "long_context_crossover.pdf",
+    "png": "long_context_crossover.png"
+  },
+  "mechanism_pr": {
+    "caption": "Mechanism-level prune quality (precision / recall / F1) per arm in the primary regime, decoupled from downstream accuracy. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "mechanism_pr.pdf",
+    "png": "mechanism_pr.png"
+  },
+  "retention_curves": {
+    "caption": "Per-task retention (final-row accuracy R[T-1,j] after the full stream) per arm in the 'distractor_heavy' regime. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "retention_curves.pdf",
+    "png": "retention_curves.png"
+  },
+  "sim_vs_real": {
+    "caption": "Sim-vs-real agreement (EC3): per-arm mean ACC on the accelerated high-compression sim stream vs the real low-compression long-horizon stream; annotated with the rank agreement and any inversion. Spearman=1.00, ranking_preserved=True. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds). MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "sim_vs_real.pdf",
+    "png": "sim_vs_real.png"
+  },
+  "tmr_targeting": {
+    "caption": "TMR-style targeting: signal-retention lift for replay arms over no-replay arms (a replay-targeting analogue, NOT a literal cued-TMR protocol), vs the Hu et al. 2020 benchmark Hedges' g=0.29. pooled obs: replay=24, no_replay=16; g=1.70. n=8 seeds; bands/error bars = 95% CI (normal approx, mean +/- 1.96*SE over seeds); Hedges' g error bar = bootstrap 95% CI. MOCK-LLM CAVEAT: MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "pdf": "tmr_targeting.pdf",
+    "png": "tmr_targeting.png"
+  }
+}

@@ -1,0 +1,4241 @@
+{
+  "analysis": {
+    "crossover": {
+      "acc_gap_baseline_minus_treatment": [
+        0.1875,
+        0.2847222222222223,
+        0.3500000000000001,
+        0.35677083333333337,
+        0.3784722222222223
+      ],
+      "acc_per_token_baseline": [
+        0.0023816612086930635,
+        0.0016070711128967456,
+        0.0009098146252701012,
+        0.0005820721769499418,
+        0.00038066235249333843
+      ],
+      "acc_per_token_treatment": [
+        0.0004038772213247173,
+        0.00021800602797250157,
+        0.00011233770442221692,
+        6.78154102969601e-05,
+        4.327321499196906e-05
+      ],
+      "baseline_arm": "long_context",
+      "crossover_found": false,
+      "crossover_length": null,
+      "lengths": [
+        2,
+        3,
+        5,
+        8,
+        12
+      ],
+      "metric": "acc_per_token",
+      "note": "no cost-adjusted crossover in the swept range [2, 3, 5, 8, 12]; long_context dominates on raw accuracy at maximum cost (EC6: absence stated).",
+      "raw_accuracy_crossover_length": null,
+      "treatment_arm": "full_dream"
+    },
+    "exceeds_noise_floor": true,
+    "headline": "Mechanism demonstration under the deterministic mock LLM: CONFIRMED H1 in the 'distractor_heavy' regime (mean paired ACC diff full_dream - no_sleep = +0.379, clears the A/A noise floor). On the long-horizon sweep no long-context crossover appears in the swept range (long_context keeps the raw-accuracy lead at maximum cost); the TMR-style replay-targeting effect is g=1.702 versus the 0.29 benchmark (exceeds); realized N=8 (floor 5 met); the observed effect needs N>=2. These are synthetic + mock-LLM mechanism results, not claims about a real Claude model.",
+    "mock_llm_caveat": "MECHANISM DEMONSTRATION ONLY. Every number in this analysis was produced in the synthetic fact-world stream under the deterministic mock LLM (no ANTHROPIC_API_KEY on this box), so it is reproducible bit-for-bit. The H1/H0 verdict is therefore a statement about the bench mechanism in this synthetic + mock-LLM regime, NOT a scientific claim about a real Claude model. Neuroscience (sleep, replay, TMR) is motivation and analogy only, never a proof of biological fidelity or real-model efficacy (DX5).",
+    "n_seeds": 8,
+    "negative": {
+      "applicable": false,
+      "matched_forms": [
+        "Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover)."
+      ],
+      "note": "no negative-result form OVERTURNS H1: the primary endpoint is confirmed and the registered secondary contrast is positive. However, the following preregistered negative pattern(s) ARE observed and reported (see the crossover / EC6 section): 'Long-context wins below stream length L (consolidation only beats stuff-it-in-context beyond a crossover).'. These concern secondary cost/length trade-offs, not the matched-budget primary contrast.",
+      "regime_tie": "distractor_heavy (signal=0.34, distractor=0.4, noise=0.26)",
+      "secondary_contrasts": {
+        "full_dream vs replay_only": "full_dream > replay_only (delta=+0.371, 95% CI [0.312, 0.425], wilcoxon p=0.014)"
+      }
+    },
+    "noise_floor": 0.0625,
+    "per_regime_verdicts": {
+      "balanced": "confirmed",
+      "distractor_heavy": "confirmed",
+      "signal_rich": "confirmed"
+    },
+    "power": {
+      "floor": 5,
+      "floor_met": true,
+      "n_seeds": 8,
+      "note": "to detect the observed paired d=4.890 at alpha=0.05 (two-sided), power=0.8, Colas et al. (2018) requires n>=2 paired seeds; the run used n=8.",
+      "observed_effect_d": 4.890171661392655,
+      "powered_for_observed": true,
+      "required_n_for_observed": 2
+    },
+    "primary_ci_hi": 0.42916666666666664,
+    "primary_ci_lo": 0.3291666666666666,
+    "primary_ci_method": "percentile",
+    "primary_effect_magnitude": "large",
+    "primary_effect_name": "cohens_d",
+    "primary_effect_value": 4.890171661392655,
+    "primary_endpoint_name": "acc_diff_full_dream_vs_no_sleep",
+    "primary_test_name": "wilcoxon_signed_rank",
+    "primary_test_p": 0.014147403886021545,
+    "primary_value": 0.37916666666666665,
+    "primary_verdict": "confirmed",
+    "sim_real_agreement_note": "sim preserves the real arm ranking (no inversions); pearson=0.981, spearman=1.000, max|mean ACC sim-real|=0.398",
+    "tmr": {
+      "benchmark_g": 0.29,
+      "exceeds_benchmark": true,
+      "g_ci_hi": 2.738782879357599,
+      "g_ci_lo": 1.1398983292160416,
+      "hedges_g": 1.7017214154227076,
+      "mean_lift": 0.28095238095238095,
+      "no_replay_arms": [
+        "no_sleep",
+        "downscale_only"
+      ],
+      "note": "replay arms ['full_dream', 'replay_only', 'reflection'] vs no-replay ['no_sleep', 'downscale_only']: mean signal-retention lift=+0.281, bias-corrected unpaired Hedges' g=1.702 (95% CI [1.140, 2.739], bootstrap on unpaired Cohen's d x Hedges factor). Benchmark Hu et al. (2020) g=0.29: exceeds it. Proxy caveat: this is a prioritized-replay targeting ANALOGUE, not a literal cued-TMR protocol.",
+      "replay_arms": [
+        "full_dream",
+        "replay_only",
+        "reflection"
+      ],
+      "signal_retention_no_replay": [
+        0.2857142857142857,
+        0.2857142857142857,
+        0.2571428571428571,
+        0.3,
+        0.2857142857142857,
+        0.2857142857142857,
+        0.3142857142857143,
+        0.2857142857142857,
+        0.2857142857142857,
+        0.2857142857142857,
+        0.2571428571428571,
+        0.3,
+        0.2857142857142857,
+        0.2857142857142857,
+        0.3142857142857143,
+        0.2857142857142857
+      ],
+      "signal_retention_replay": [
+        0.6714285714285714,
+        0.7142857142857143,
+        0.7,
+        0.7285714285714285,
+        0.7,
+        0.6428571428571429,
+        0.6428571428571429,
+        0.6571428571428571,
+        0.3142857142857143,
+        0.2571428571428571,
+        0.2714285714285714,
+        0.2714285714285714,
+        0.3142857142857143,
+        0.2571428571428571,
+        0.3142857142857143,
+        0.2857142857142857,
+        0.7714285714285715,
+        0.7428571428571429,
+        0.7571428571428571,
+        0.7142857142857143,
+        0.6857142857142857,
+        0.7285714285714285,
+        0.7857142857142857,
+        0.7142857142857143
+      ]
+    }
+  },
+  "coverage_notes": [
+    "regime sweep: ran 3 regimes x 9 arms x 8 seeds = 216 cells; 0 dropped",
+    "regimes=['signal_rich', 'balanced', 'distractor_heavy']; primary_regime=distractor_heavy",
+    "length sweep: ran 5 lengths [2, 3, 5, 8, 12] x 8 seeds x 3 arms = 120 runs; 0 dropped",
+    "length sweep arms=['full_dream', 'long_context', 'no_sleep']",
+    "sim preserves the real arm ranking (no inversions); pearson=0.981, spearman=1.000, max|mean ACC sim-real|=0.398",
+    "phase5: 3 regimes, 5 lengths, 3 sim/real arms; 3 per-cell manifests written; model_mocked=True"
+  ],
+  "experiment": "phase5-full",
+  "git_commit": "05add10379a5efcbdba95501bcf9ad7a83b86465",
+  "grid": {
+    "arms": [
+      "no_sleep",
+      "replay_only",
+      "downscale_only",
+      "random_pruning",
+      "full_dream",
+      "reflection",
+      "oracle",
+      "long_context",
+      "aa"
+    ],
+    "coverage_notes": [
+      "regime sweep: ran 3 regimes x 9 arms x 8 seeds = 216 cells; 0 dropped",
+      "regimes=['signal_rich', 'balanced', 'distractor_heavy']; primary_regime=distractor_heavy"
+    ],
+    "primary_regime": "distractor_heavy",
+    "regimes": [
+      {
+        "aa_abs_difference": 5.551115123125783e-17,
+        "aa_significant": false,
+        "acc_by_arm": {
+          "aa": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3,
+            0.3666666666666667
+          ],
+          "downscale_only": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3,
+            0.3666666666666667
+          ],
+          "full_dream": [
+            0.6666666666666666,
+            0.7,
+            0.7666666666666666,
+            0.7,
+            0.8,
+            0.5333333333333333,
+            0.7,
+            0.6333333333333333
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3,
+            0.3666666666666667
+          ],
+          "oracle": [
+            0.3333333333333333,
+            0.3666666666666667,
+            0.26666666666666666,
+            0.3,
+            0.3666666666666667,
+            0.4,
+            0.3333333333333333,
+            0.3666666666666667
+          ],
+          "random_pruning": [
+            0.1,
+            0.1,
+            0.13333333333333333,
+            0.16666666666666666,
+            0.2,
+            0.16666666666666666,
+            0.06666666666666667,
+            0.06666666666666667
+          ],
+          "reflection": [
+            0.7,
+            0.6,
+            0.6,
+            0.8,
+            0.7,
+            0.9,
+            0.6333333333333333,
+            0.7333333333333333
+          ],
+          "replay_only": [
+            0.3,
+            0.26666666666666666,
+            0.26666666666666666,
+            0.3,
+            0.3,
+            0.3,
+            0.3,
+            0.3666666666666667
+          ]
+        },
+        "arms": [
+          "no_sleep",
+          "replay_only",
+          "downscale_only",
+          "random_pruning",
+          "full_dream",
+          "reflection",
+          "oracle",
+          "long_context",
+          "aa"
+        ],
+        "budget_matched": false,
+        "manifest_path": "phase5/regime_signal_rich/manifest.json",
+        "memory_vectors_by_arm": {
+          "aa": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "downscale_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "full_dream": [
+            168.0,
+            163.0,
+            165.0,
+            167.0,
+            166.0,
+            164.0,
+            167.0,
+            162.0
+          ],
+          "long_context": [
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "oracle": [
+            48.0,
+            48.0,
+            48.0,
+            48.0,
+            48.0,
+            48.0,
+            48.0,
+            48.0
+          ],
+          "random_pruning": [
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0
+          ],
+          "reflection": [
+            167.0,
+            171.0,
+            168.0,
+            165.0,
+            167.0,
+            168.0,
+            170.0,
+            170.0
+          ],
+          "replay_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "primary_ci_hi": 0.44999999999999996,
+        "primary_ci_lo": 0.3125,
+        "primary_endpoint": {
+          "baseline_arm": "no_sleep",
+          "description": "The paired difference in final Average Accuracy (ACC = mean of the last row of R[i,j]) between the full_dream treatment arm and the no_sleep baseline arm, paired by seed (each seed fixes both the stream-generation seed and the agent/LLM sampling seed), aggregated as the mean paired difference over seeds. Reported with a bootstrap 95% CI, a paired Wilcoxon signed-rank test, and a standardized paired effect size (Cohen's d) with CI. The effect must also exceed the A/A noise floor (the absolute ACC difference between two seeds of the reference arm) to count as confirmed.",
+          "difference_ci": {
+            "hi": 0.44999999999999996,
+            "level": 0.95,
+            "lo": 0.3125,
+            "method": "percentile",
+            "n_resamples": 10000,
+            "point": 0.3833333333333333,
+            "statistic": "paired_mean_diff"
+          },
+          "effect": {
+            "hi": 10.268949108330109,
+            "level": 0.95,
+            "lo": 2.5455108624126503,
+            "magnitude": "large",
+            "name": "cohens_d",
+            "value": 3.5857549956583608
+          },
+          "exceeds_noise_floor": true,
+          "name": "acc_diff_full_dream_vs_no_sleep",
+          "noise_floor": 5.551115123125783e-17,
+          "test": {
+            "detail": {
+              "continuity_correction": true,
+              "r_minus": 0.0,
+              "r_plus": 36.0,
+              "tie_correction": 6.0,
+              "z": -2.4534987303147355,
+              "zeros_dropped": 0
+            },
+            "n": 8,
+            "p_value": 0.014147403886021545,
+            "statistic": 0.0,
+            "test": "wilcoxon_signed_rank"
+          },
+          "treatment_arm": "full_dream",
+          "value": 0.3833333333333333,
+          "verdict": "confirmed"
+        },
+        "primary_value": 0.3833333333333333,
+        "primary_verdict": "confirmed",
+        "prune_f1_by_arm": {
+          "aa": [
+            0.43000000000000005,
+            0.4,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.43000000000000005,
+            0.45000000000000007,
+            0.42
+          ],
+          "downscale_only": [
+            0.43000000000000005,
+            0.4,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.43000000000000005,
+            0.45000000000000007,
+            0.42
+          ],
+          "full_dream": [
+            0.44961240310077516,
+            0.39393939393939387,
+            0.4592592592592593,
+            0.4186046511627907,
+            0.4696969696969697,
+            0.3582089552238806,
+            0.42424242424242425,
+            0.42962962962962964
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.43000000000000005,
+            0.4,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.41000000000000003,
+            0.43000000000000005,
+            0.45000000000000007,
+            0.42
+          ],
+          "oracle": [
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566,
+            0.5660377358490566
+          ],
+          "random_pruning": [
+            0.4347826086956522,
+            0.4521739130434783,
+            0.4347826086956522,
+            0.4347826086956522,
+            0.4521739130434783,
+            0.4521739130434783,
+            0.41739130434782606,
+            0.44347826086956527
+          ],
+          "reflection": [
+            0.464,
+            0.3739837398373984,
+            0.484375,
+            0.40625,
+            0.38709677419354843,
+            0.42975206611570244,
+            0.435483870967742,
+            0.4065040650406504
+          ],
+          "replay_only": [
+            0.44,
+            0.39,
+            0.43000000000000005,
+            0.4,
+            0.42,
+            0.4,
+            0.45000000000000007,
+            0.42
+          ]
+        },
+        "prune_precision_by_arm": {
+          "aa": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "downscale_only": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "full_dream": [
+            0.42028985507246375,
+            0.3611111111111111,
+            0.41333333333333333,
+            0.391304347826087,
+            0.4305555555555556,
+            0.32432432432432434,
+            0.3888888888888889,
+            0.38666666666666666
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "oracle": [
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316,
+            0.39473684210526316
+          ],
+          "random_pruning": [
+            0.29411764705882354,
+            0.3058823529411765,
+            0.29411764705882354,
+            0.29411764705882354,
+            0.3058823529411765,
+            0.3058823529411765,
+            0.2823529411764706,
+            0.3
+          ],
+          "reflection": [
+            0.4461538461538462,
+            0.36507936507936506,
+            0.45588235294117646,
+            0.38235294117647056,
+            0.375,
+            0.4262295081967213,
+            0.421875,
+            0.3968253968253968
+          ],
+          "replay_only": [
+            0.3142857142857143,
+            0.2785714285714286,
+            0.30714285714285716,
+            0.2857142857142857,
+            0.3,
+            0.2857142857142857,
+            0.32142857142857145,
+            0.3
+          ]
+        },
+        "prune_recall_by_arm": {
+          "aa": [
+            0.7166666666666667,
+            0.6666666666666666,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.7166666666666667,
+            0.75,
+            0.7
+          ],
+          "downscale_only": [
+            0.7166666666666667,
+            0.6666666666666666,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.7166666666666667,
+            0.75,
+            0.7
+          ],
+          "full_dream": [
+            0.48333333333333334,
+            0.43333333333333335,
+            0.5166666666666667,
+            0.45,
+            0.5166666666666667,
+            0.4,
+            0.4666666666666667,
+            0.48333333333333334
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.7166666666666667,
+            0.6666666666666666,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.6833333333333333,
+            0.7166666666666667,
+            0.75,
+            0.7
+          ],
+          "oracle": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "random_pruning": [
+            0.8333333333333334,
+            0.8666666666666667,
+            0.8333333333333334,
+            0.8333333333333334,
+            0.8666666666666667,
+            0.8666666666666667,
+            0.8,
+            0.85
+          ],
+          "reflection": [
+            0.48333333333333334,
+            0.38333333333333336,
+            0.5166666666666667,
+            0.43333333333333335,
+            0.4,
+            0.43333333333333335,
+            0.45,
+            0.4166666666666667
+          ],
+          "replay_only": [
+            0.7333333333333333,
+            0.65,
+            0.7166666666666667,
+            0.6666666666666666,
+            0.7,
+            0.6666666666666666,
+            0.75,
+            0.7
+          ]
+        },
+        "regime": {
+          "distractor": 0.2,
+          "name": "signal_rich",
+          "noise": 0.1,
+          "signal": 0.7
+        },
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "signal_retention_by_arm": {
+          "aa": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "downscale_only": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "full_dream": [
+            0.7142857142857143,
+            0.6714285714285714,
+            0.6857142857142857,
+            0.7,
+            0.7071428571428572,
+            0.6428571428571429,
+            0.6857142857142857,
+            0.6714285714285714
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.30714285714285716,
+            0.2857142857142857,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.29285714285714287,
+            0.30714285714285716,
+            0.32142857142857145,
+            0.3
+          ],
+          "oracle": [
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286,
+            0.34285714285714286
+          ],
+          "random_pruning": [
+            0.14285714285714285,
+            0.15714285714285714,
+            0.14285714285714285,
+            0.14285714285714285,
+            0.15714285714285714,
+            0.15714285714285714,
+            0.12857142857142856,
+            0.15
+          ],
+          "reflection": [
+            0.7428571428571429,
+            0.7142857142857143,
+            0.7357142857142858,
+            0.7,
+            0.7142857142857143,
+            0.75,
+            0.7357142857142858,
+            0.7285714285714285
+          ],
+          "replay_only": [
+            0.3142857142857143,
+            0.2785714285714286,
+            0.30714285714285716,
+            0.2857142857142857,
+            0.3,
+            0.2857142857142857,
+            0.32142857142857145,
+            0.3
+          ]
+        },
+        "total_tokens_by_arm": {
+          "aa": [
+            1017.0,
+            992.0,
+            988.0,
+            1006.0,
+            952.0,
+            995.0,
+            983.0,
+            989.0
+          ],
+          "downscale_only": [
+            1011.0,
+            981.0,
+            977.0,
+            1001.0,
+            952.0,
+            989.0,
+            977.0,
+            983.0
+          ],
+          "full_dream": [
+            6147.0,
+            6045.0,
+            6107.0,
+            6125.0,
+            6038.0,
+            6057.0,
+            6077.0,
+            6051.0
+          ],
+          "long_context": [
+            1023.0,
+            1040.0,
+            1025.0,
+            1073.0,
+            952.0,
+            1045.0,
+            1037.0,
+            1048.0
+          ],
+          "no_sleep": [
+            1017.0,
+            992.0,
+            988.0,
+            1006.0,
+            952.0,
+            995.0,
+            983.0,
+            989.0
+          ],
+          "oracle": [
+            999.0,
+            975.0,
+            977.0,
+            1001.0,
+            952.0,
+            978.0,
+            977.0,
+            977.0
+          ],
+          "random_pruning": [
+            1005.0,
+            975.0,
+            988.0,
+            1007.0,
+            952.0,
+            989.0,
+            983.0,
+            988.0
+          ],
+          "reflection": [
+            3542.0,
+            3556.0,
+            3546.0,
+            3522.0,
+            3487.0,
+            3530.0,
+            3539.0,
+            3550.0
+          ],
+          "replay_only": [
+            1011.0,
+            987.0,
+            977.0,
+            1000.0,
+            952.0,
+            989.0,
+            976.0,
+            990.0
+          ]
+        }
+      },
+      {
+        "aa_abs_difference": 0.012499999999999956,
+        "aa_significant": false,
+        "acc_by_arm": {
+          "aa": [
+            0.3,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.2,
+            0.3,
+            0.3,
+            0.26666666666666666
+          ],
+          "downscale_only": [
+            0.3,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.2,
+            0.3,
+            0.3,
+            0.26666666666666666
+          ],
+          "full_dream": [
+            0.7333333333333333,
+            0.6666666666666667,
+            0.7,
+            0.6,
+            0.7,
+            0.6333333333333333,
+            0.8,
+            0.5
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.3,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.2,
+            0.3,
+            0.3,
+            0.26666666666666666
+          ],
+          "oracle": [
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4
+          ],
+          "random_pruning": [
+            0.16666666666666666,
+            0.2333333333333333,
+            0.16666666666666666,
+            0.23333333333333334,
+            0.13333333333333333,
+            0.2,
+            0.13333333333333333,
+            0.13333333333333333
+          ],
+          "reflection": [
+            0.8,
+            0.6333333333333333,
+            0.7333333333333333,
+            0.8,
+            0.7666666666666666,
+            0.7,
+            0.6333333333333333,
+            0.7
+          ],
+          "replay_only": [
+            0.3,
+            0.23333333333333334,
+            0.3333333333333333,
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.26666666666666666
+          ]
+        },
+        "arms": [
+          "no_sleep",
+          "replay_only",
+          "downscale_only",
+          "random_pruning",
+          "full_dream",
+          "reflection",
+          "oracle",
+          "long_context",
+          "aa"
+        ],
+        "budget_matched": false,
+        "manifest_path": "phase5/regime_balanced/manifest.json",
+        "memory_vectors_by_arm": {
+          "aa": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "downscale_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "full_dream": [
+            157.0,
+            150.0,
+            153.0,
+            151.0,
+            156.0,
+            149.0,
+            153.0,
+            147.0
+          ],
+          "long_context": [
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "oracle": [
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0,
+            40.0
+          ],
+          "random_pruning": [
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0
+          ],
+          "reflection": [
+            156.0,
+            153.0,
+            158.0,
+            155.0,
+            152.0,
+            155.0,
+            157.0,
+            158.0
+          ],
+          "replay_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "primary_ci_hi": 0.44999999999999996,
+        "primary_ci_lo": 0.3208333333333333,
+        "primary_endpoint": {
+          "baseline_arm": "no_sleep",
+          "description": "The paired difference in final Average Accuracy (ACC = mean of the last row of R[i,j]) between the full_dream treatment arm and the no_sleep baseline arm, paired by seed (each seed fixes both the stream-generation seed and the agent/LLM sampling seed), aggregated as the mean paired difference over seeds. Reported with a bootstrap 95% CI, a paired Wilcoxon signed-rank test, and a standardized paired effect size (Cohen's d) with CI. The effect must also exceed the A/A noise floor (the absolute ACC difference between two seeds of the reference arm) to count as confirmed.",
+          "difference_ci": {
+            "hi": 0.44999999999999996,
+            "level": 0.95,
+            "lo": 0.3208333333333333,
+            "method": "percentile",
+            "n_resamples": 10000,
+            "point": 0.38749999999999996,
+            "statistic": "paired_mean_diff"
+          },
+          "effect": {
+            "hi": 8.83883476483184,
+            "level": 0.95,
+            "lo": 2.9342190849057714,
+            "magnitude": "large",
+            "name": "cohens_d",
+            "value": 3.848367382001011
+          },
+          "exceeds_noise_floor": true,
+          "name": "acc_diff_full_dream_vs_no_sleep",
+          "noise_floor": 0.012499999999999956,
+          "test": {
+            "detail": {
+              "continuity_correction": true,
+              "r_minus": 0.0,
+              "r_plus": 36.0,
+              "tie_correction": 0.0,
+              "z": -2.450490147049017,
+              "zeros_dropped": 0
+            },
+            "n": 8,
+            "p_value": 0.014266186701446928,
+            "statistic": 0.0,
+            "test": "wilcoxon_signed_rank"
+          },
+          "treatment_arm": "full_dream",
+          "value": 0.38749999999999996,
+          "verdict": "confirmed"
+        },
+        "primary_value": 0.38749999999999996,
+        "primary_verdict": "confirmed",
+        "prune_f1_by_arm": {
+          "aa": [
+            0.5916666666666667,
+            0.5583333333333333,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.6,
+            0.5833333333333334
+          ],
+          "downscale_only": [
+            0.5916666666666667,
+            0.5583333333333333,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.6,
+            0.5833333333333334
+          ],
+          "full_dream": [
+            0.5197740112994351,
+            0.5792349726775956,
+            0.48618784530386744,
+            0.5414364640883979,
+            0.6033519553072625,
+            0.5053763440860215,
+            0.5901639344262295,
+            0.5454545454545454
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.5916666666666667,
+            0.5583333333333333,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.5666666666666667,
+            0.5916666666666667,
+            0.6,
+            0.5833333333333334
+          ],
+          "oracle": [
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693,
+            0.7692307692307693
+          ],
+          "random_pruning": [
+            0.6074074074074074,
+            0.6222222222222222,
+            0.6148148148148148,
+            0.6444444444444444,
+            0.6296296296296295,
+            0.6222222222222222,
+            0.6148148148148148,
+            0.6296296296296295
+          ],
+          "reflection": [
+            0.5497076023391813,
+            0.5257142857142858,
+            0.5581395348837209,
+            0.5197740112994351,
+            0.5257142857142858,
+            0.508670520231214,
+            0.5485714285714285,
+            0.5202312138728323
+          ],
+          "replay_only": [
+            0.6083333333333334,
+            0.55,
+            0.5833333333333334,
+            0.5750000000000001,
+            0.5833333333333334,
+            0.5750000000000001,
+            0.6,
+            0.5833333333333334
+          ]
+        },
+        "prune_precision_by_arm": {
+          "aa": [
+            0.5071428571428571,
+            0.4785714285714286,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.5142857142857142,
+            0.5
+          ],
+          "downscale_only": [
+            0.5071428571428571,
+            0.4785714285714286,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.5142857142857142,
+            0.5
+          ],
+          "full_dream": [
+            0.5974025974025974,
+            0.6385542168674698,
+            0.5432098765432098,
+            0.6049382716049383,
+            0.6835443037974683,
+            0.5465116279069767,
+            0.6506024096385542,
+            0.5862068965517241
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.5071428571428571,
+            0.4785714285714286,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.4857142857142857,
+            0.5071428571428571,
+            0.5142857142857142,
+            0.5
+          ],
+          "oracle": [
+            0.625,
+            0.625,
+            0.625,
+            0.625,
+            0.625,
+            0.625,
+            0.625,
+            0.625
+          ],
+          "random_pruning": [
+            0.4823529411764706,
+            0.49411764705882355,
+            0.48823529411764705,
+            0.5117647058823529,
+            0.5,
+            0.49411764705882355,
+            0.48823529411764705,
+            0.5
+          ],
+          "reflection": [
+            0.6619718309859155,
+            0.6133333333333333,
+            0.6666666666666666,
+            0.5974025974025974,
+            0.6133333333333333,
+            0.6027397260273972,
+            0.64,
+            0.6164383561643836
+          ],
+          "replay_only": [
+            0.5214285714285715,
+            0.4714285714285714,
+            0.5,
+            0.4928571428571429,
+            0.5,
+            0.4928571428571429,
+            0.5142857142857142,
+            0.5
+          ]
+        },
+        "prune_recall_by_arm": {
+          "aa": [
+            0.71,
+            0.67,
+            0.68,
+            0.71,
+            0.68,
+            0.71,
+            0.72,
+            0.7
+          ],
+          "downscale_only": [
+            0.71,
+            0.67,
+            0.68,
+            0.71,
+            0.68,
+            0.71,
+            0.72,
+            0.7
+          ],
+          "full_dream": [
+            0.46,
+            0.53,
+            0.44,
+            0.49,
+            0.54,
+            0.47,
+            0.54,
+            0.51
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.71,
+            0.67,
+            0.68,
+            0.71,
+            0.68,
+            0.71,
+            0.72,
+            0.7
+          ],
+          "oracle": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "random_pruning": [
+            0.82,
+            0.84,
+            0.83,
+            0.87,
+            0.85,
+            0.84,
+            0.83,
+            0.85
+          ],
+          "reflection": [
+            0.47,
+            0.46,
+            0.48,
+            0.46,
+            0.46,
+            0.44,
+            0.48,
+            0.45
+          ],
+          "replay_only": [
+            0.73,
+            0.66,
+            0.7,
+            0.69,
+            0.7,
+            0.69,
+            0.72,
+            0.7
+          ]
+        },
+        "regime": {
+          "distractor": 0.3,
+          "name": "balanced",
+          "noise": 0.2,
+          "signal": 0.5
+        },
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "signal_retention_by_arm": {
+          "aa": [
+            0.31,
+            0.27,
+            0.28,
+            0.31,
+            0.28,
+            0.31,
+            0.32,
+            0.3
+          ],
+          "downscale_only": [
+            0.31,
+            0.27,
+            0.28,
+            0.31,
+            0.28,
+            0.31,
+            0.32,
+            0.3
+          ],
+          "full_dream": [
+            0.69,
+            0.7,
+            0.63,
+            0.68,
+            0.75,
+            0.61,
+            0.71,
+            0.64
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.31,
+            0.27,
+            0.28,
+            0.31,
+            0.28,
+            0.31,
+            0.32,
+            0.3
+          ],
+          "oracle": [
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4,
+            0.4
+          ],
+          "random_pruning": [
+            0.12,
+            0.14,
+            0.13,
+            0.17,
+            0.15,
+            0.14,
+            0.13,
+            0.15
+          ],
+          "reflection": [
+            0.76,
+            0.71,
+            0.76,
+            0.69,
+            0.71,
+            0.71,
+            0.73,
+            0.72
+          ],
+          "replay_only": [
+            0.33,
+            0.26,
+            0.3,
+            0.29,
+            0.3,
+            0.29,
+            0.32,
+            0.3
+          ]
+        },
+        "total_tokens_by_arm": {
+          "aa": [
+            1078.0,
+            1183.0,
+            1028.0,
+            1076.0,
+            952.0,
+            1022.0,
+            1008.0,
+            1017.0
+          ],
+          "downscale_only": [
+            1067.0,
+            1120.0,
+            1010.0,
+            1052.0,
+            952.0,
+            1009.0,
+            1003.0,
+            1005.0
+          ],
+          "full_dream": [
+            6066.0,
+            6150.0,
+            5996.0,
+            6032.0,
+            5949.0,
+            5947.0,
+            5974.0,
+            5943.0
+          ],
+          "long_context": [
+            1096.0,
+            1237.0,
+            1051.0,
+            1096.0,
+            952.0,
+            1052.0,
+            1049.0,
+            1048.0
+          ],
+          "no_sleep": [
+            1078.0,
+            1183.0,
+            1028.0,
+            1076.0,
+            952.0,
+            1022.0,
+            1008.0,
+            1017.0
+          ],
+          "oracle": [
+            1049.0,
+            1092.0,
+            1004.0,
+            1046.0,
+            952.0,
+            1003.0,
+            1003.0,
+            999.0
+          ],
+          "random_pruning": [
+            1066.0,
+            1147.0,
+            1021.0,
+            1070.0,
+            952.0,
+            1028.0,
+            1026.0,
+            1018.0
+          ],
+          "reflection": [
+            3506.0,
+            3611.0,
+            3480.0,
+            3523.0,
+            3347.0,
+            3474.0,
+            3455.0,
+            3466.0
+          ],
+          "replay_only": [
+            1065.0,
+            1137.0,
+            1016.0,
+            1058.0,
+            952.0,
+            1009.0,
+            1008.0,
+            1011.0
+          ]
+        }
+      },
+      {
+        "aa_abs_difference": 0.0625,
+        "aa_significant": true,
+        "acc_by_arm": {
+          "aa": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3,
+            0.3,
+            0.23333333333333334,
+            0.23333333333333334
+          ],
+          "downscale_only": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3,
+            0.3,
+            0.23333333333333334,
+            0.23333333333333334
+          ],
+          "full_dream": [
+            0.5666666666666667,
+            0.7666666666666666,
+            0.5666666666666667,
+            0.7333333333333333,
+            0.6666666666666666,
+            0.6,
+            0.6333333333333333,
+            0.6666666666666666
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3,
+            0.3,
+            0.23333333333333334,
+            0.23333333333333334
+          ],
+          "oracle": [
+            0.4333333333333333,
+            0.5,
+            0.4333333333333333,
+            0.5,
+            0.4666666666666667,
+            0.4333333333333333,
+            0.4,
+            0.5
+          ],
+          "random_pruning": [
+            0.2,
+            0.1,
+            0.13333333333333333,
+            0.16666666666666666,
+            0.13333333333333333,
+            0.2,
+            0.13333333333333333,
+            0.13333333333333333
+          ],
+          "reflection": [
+            0.8,
+            0.7333333333333333,
+            0.7333333333333333,
+            0.7333333333333334,
+            0.7666666666666667,
+            0.7333333333333333,
+            0.7666666666666666,
+            0.7666666666666666
+          ],
+          "replay_only": [
+            0.3333333333333333,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3333333333333333,
+            0.3,
+            0.23333333333333334,
+            0.23333333333333334
+          ]
+        },
+        "arms": [
+          "no_sleep",
+          "replay_only",
+          "downscale_only",
+          "random_pruning",
+          "full_dream",
+          "reflection",
+          "oracle",
+          "long_context",
+          "aa"
+        ],
+        "budget_matched": false,
+        "manifest_path": "phase5/regime_distractor_heavy/manifest.json",
+        "memory_vectors_by_arm": {
+          "aa": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "downscale_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "full_dream": [
+            147.0,
+            141.0,
+            146.0,
+            145.0,
+            146.0,
+            141.0,
+            143.0,
+            141.0
+          ],
+          "long_context": [
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ],
+          "oracle": [
+            34.0,
+            34.0,
+            34.0,
+            34.0,
+            34.0,
+            34.0,
+            34.0,
+            34.0
+          ],
+          "random_pruning": [
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0,
+            30.0
+          ],
+          "reflection": [
+            147.0,
+            146.0,
+            150.0,
+            145.0,
+            146.0,
+            147.0,
+            147.0,
+            152.0
+          ],
+          "replay_only": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "primary_ci_hi": 0.42916666666666664,
+        "primary_ci_lo": 0.3291666666666666,
+        "primary_endpoint": {
+          "baseline_arm": "no_sleep",
+          "description": "The paired difference in final Average Accuracy (ACC = mean of the last row of R[i,j]) between the full_dream treatment arm and the no_sleep baseline arm, paired by seed (each seed fixes both the stream-generation seed and the agent/LLM sampling seed), aggregated as the mean paired difference over seeds. Reported with a bootstrap 95% CI, a paired Wilcoxon signed-rank test, and a standardized paired effect size (Cohen's d) with CI. The effect must also exceed the A/A noise floor (the absolute ACC difference between two seeds of the reference arm) to count as confirmed.",
+          "difference_ci": {
+            "hi": 0.42916666666666664,
+            "level": 0.95,
+            "lo": 0.3291666666666666,
+            "method": "percentile",
+            "n_resamples": 10000,
+            "point": 0.37916666666666665,
+            "statistic": "paired_mean_diff"
+          },
+          "effect": {
+            "hi": 9.693120186367672,
+            "level": 0.95,
+            "lo": 3.8259381801708274,
+            "magnitude": "large",
+            "name": "cohens_d",
+            "value": 4.890171661392655
+          },
+          "exceeds_noise_floor": true,
+          "name": "acc_diff_full_dream_vs_no_sleep",
+          "noise_floor": 0.0625,
+          "test": {
+            "detail": {
+              "continuity_correction": true,
+              "r_minus": 0.0,
+              "r_plus": 36.0,
+              "tie_correction": 6.0,
+              "z": -2.4534987303147355,
+              "zeros_dropped": 0
+            },
+            "n": 8,
+            "p_value": 0.014147403886021545,
+            "statistic": 0.0,
+            "test": "wilcoxon_signed_rank"
+          },
+          "treatment_arm": "full_dream",
+          "value": 0.37916666666666665,
+          "verdict": "confirmed"
+        },
+        "primary_value": 0.37916666666666665,
+        "primary_verdict": "confirmed",
+        "prune_f1_by_arm": {
+          "aa": [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6518518518518519,
+            0.6740740740740739,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6814814814814816,
+            0.6666666666666666
+          ],
+          "downscale_only": [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6518518518518519,
+            0.6740740740740739,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6814814814814816,
+            0.6666666666666666
+          ],
+          "full_dream": [
+            0.5898617511520737,
+            0.6301369863013699,
+            0.5953488372093023,
+            0.6267281105990784,
+            0.6018518518518519,
+            0.5972850678733032,
+            0.5844748858447488,
+            0.6063348416289592
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6518518518518519,
+            0.6740740740740739,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6814814814814816,
+            0.6666666666666666
+          ],
+          "oracle": [
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784,
+            0.8783783783783784
+          ],
+          "random_pruning": [
+            0.7266666666666667,
+            0.7199999999999999,
+            0.7266666666666667,
+            0.7533333333333334,
+            0.7266666666666667,
+            0.7333333333333334,
+            0.7333333333333334,
+            0.74
+          ],
+          "reflection": [
+            0.6095238095238096,
+            0.583732057416268,
+            0.5728155339805825,
+            0.5915492957746479,
+            0.5454545454545454,
+            0.5673076923076924,
+            0.6384976525821596,
+            0.5576923076923078
+          ],
+          "replay_only": [
+            0.6814814814814816,
+            0.6518518518518519,
+            0.6592592592592592,
+            0.6592592592592592,
+            0.6814814814814816,
+            0.6518518518518519,
+            0.6814814814814816,
+            0.6666666666666666
+          ]
+        },
+        "prune_precision_by_arm": {
+          "aa": [
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6285714285714286,
+            0.65,
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6571428571428571,
+            0.6428571428571429
+          ],
+          "downscale_only": [
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6285714285714286,
+            0.65,
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6571428571428571,
+            0.6428571428571429
+          ],
+          "full_dream": [
+            0.735632183908046,
+            0.7752808988764045,
+            0.7529411764705882,
+            0.7816091954022989,
+            0.7558139534883721,
+            0.7252747252747253,
+            0.7191011235955056,
+            0.7362637362637363
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6285714285714286,
+            0.65,
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6571428571428571,
+            0.6428571428571429
+          ],
+          "oracle": [
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819,
+            0.7831325301204819
+          ],
+          "random_pruning": [
+            0.6411764705882353,
+            0.6352941176470588,
+            0.6411764705882353,
+            0.6647058823529411,
+            0.6411764705882353,
+            0.6470588235294118,
+            0.6470588235294118,
+            0.6529411764705882
+          ],
+          "reflection": [
+            0.8,
+            0.7721518987341772,
+            0.7763157894736842,
+            0.7590361445783133,
+            0.7215189873417721,
+            0.7564102564102564,
+            0.8192771084337349,
+            0.7435897435897436
+          ],
+          "replay_only": [
+            0.6571428571428571,
+            0.6285714285714286,
+            0.6357142857142857,
+            0.6357142857142857,
+            0.6571428571428571,
+            0.6285714285714286,
+            0.6571428571428571,
+            0.6428571428571429
+          ]
+        },
+        "prune_recall_by_arm": {
+          "aa": [
+            0.6923076923076923,
+            0.6923076923076923,
+            0.676923076923077,
+            0.7,
+            0.6923076923076923,
+            0.6923076923076923,
+            0.7076923076923077,
+            0.6923076923076923
+          ],
+          "downscale_only": [
+            0.6923076923076923,
+            0.6923076923076923,
+            0.676923076923077,
+            0.7,
+            0.6923076923076923,
+            0.6923076923076923,
+            0.7076923076923077,
+            0.6923076923076923
+          ],
+          "full_dream": [
+            0.49230769230769234,
+            0.5307692307692308,
+            0.49230769230769234,
+            0.5230769230769231,
+            0.5,
+            0.5076923076923077,
+            0.49230769230769234,
+            0.5153846153846153
+          ],
+          "long_context": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "no_sleep": [
+            0.6923076923076923,
+            0.6923076923076923,
+            0.676923076923077,
+            0.7,
+            0.6923076923076923,
+            0.6923076923076923,
+            0.7076923076923077,
+            0.6923076923076923
+          ],
+          "oracle": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "random_pruning": [
+            0.8384615384615385,
+            0.8307692307692308,
+            0.8384615384615385,
+            0.8692307692307693,
+            0.8384615384615385,
+            0.8461538461538461,
+            0.8461538461538461,
+            0.8538461538461538
+          ],
+          "reflection": [
+            0.49230769230769234,
+            0.46923076923076923,
+            0.45384615384615384,
+            0.4846153846153846,
+            0.43846153846153846,
+            0.45384615384615384,
+            0.5230769230769231,
+            0.4461538461538462
+          ],
+          "replay_only": [
+            0.7076923076923077,
+            0.676923076923077,
+            0.6846153846153846,
+            0.6846153846153846,
+            0.7076923076923077,
+            0.676923076923077,
+            0.7076923076923077,
+            0.6923076923076923
+          ]
+        },
+        "regime": {
+          "distractor": 0.4,
+          "name": "distractor_heavy",
+          "noise": 0.26,
+          "signal": 0.34
+        },
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "signal_retention_by_arm": {
+          "aa": [
+            0.2857142857142857,
+            0.2857142857142857,
+            0.2571428571428571,
+            0.3,
+            0.2857142857142857,
+            0.2857142857142857,
+            0.3142857142857143,
+            0.2857142857142857
+          ],
+          "downscale_only": [
+            0.2857142857142857,
+            0.2857142857142857,
+            0.2571428571428571,
+            0.3,
+            0.2857142857142857,
+            0.2857142857142857,
+            0.3142857142857143,
+            0.2857142857142857
+          ],
+          "full_dream": [
+            0.6714285714285714,
+            0.7142857142857143,
+            0.7,
+            0.7285714285714285,
+            0.7,
+            0.6428571428571429,
+            0.6428571428571429,
+            0.6571428571428571
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.2857142857142857,
+            0.2857142857142857,
+            0.2571428571428571,
+            0.3,
+            0.2857142857142857,
+            0.2857142857142857,
+            0.3142857142857143,
+            0.2857142857142857
+          ],
+          "oracle": [
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857,
+            0.4857142857142857
+          ],
+          "random_pruning": [
+            0.12857142857142856,
+            0.11428571428571428,
+            0.12857142857142856,
+            0.18571428571428572,
+            0.12857142857142856,
+            0.14285714285714285,
+            0.14285714285714285,
+            0.15714285714285714
+          ],
+          "reflection": [
+            0.7714285714285715,
+            0.7428571428571429,
+            0.7571428571428571,
+            0.7142857142857143,
+            0.6857142857142857,
+            0.7285714285714285,
+            0.7857142857142857,
+            0.7142857142857143
+          ],
+          "replay_only": [
+            0.3142857142857143,
+            0.2571428571428571,
+            0.2714285714285714,
+            0.2714285714285714,
+            0.3142857142857143,
+            0.2571428571428571,
+            0.3142857142857143,
+            0.2857142857142857
+          ]
+        },
+        "total_tokens_by_arm": {
+          "aa": [
+            1110.0,
+            1229.0,
+            1048.0,
+            1193.0,
+            953.0,
+            1123.0,
+            1024.0,
+            1040.0
+          ],
+          "downscale_only": [
+            1092.0,
+            1168.0,
+            1023.0,
+            1150.0,
+            953.0,
+            1089.0,
+            1018.0,
+            1022.0
+          ],
+          "full_dream": [
+            6020.0,
+            5612.0,
+            5700.0,
+            5824.0,
+            5874.0,
+            5518.0,
+            5928.0,
+            5813.0
+          ],
+          "long_context": [
+            1110.0,
+            1234.0,
+            1054.0,
+            1206.0,
+            953.0,
+            1141.0,
+            1049.0,
+            1046.0
+          ],
+          "no_sleep": [
+            1110.0,
+            1229.0,
+            1048.0,
+            1193.0,
+            953.0,
+            1123.0,
+            1024.0,
+            1040.0
+          ],
+          "oracle": [
+            1074.0,
+            1127.0,
+            1017.0,
+            1132.0,
+            953.0,
+            1071.0,
+            1012.0,
+            1011.0
+          ],
+          "random_pruning": [
+            1098.0,
+            1212.0,
+            1041.0,
+            1198.0,
+            953.0,
+            1119.0,
+            1043.0,
+            1040.0
+          ],
+          "reflection": [
+            3472.0,
+            3481.0,
+            3422.0,
+            3563.0,
+            3207.0,
+            3523.0,
+            3426.0,
+            3341.0
+          ],
+          "replay_only": [
+            1099.0,
+            1178.0,
+            1028.0,
+            1156.0,
+            954.0,
+            1095.0,
+            1018.0,
+            1028.0
+          ]
+        }
+      }
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "length_sweep": {
+    "baseline_arm": "long_context",
+    "coverage_notes": [
+      "length sweep: ran 5 lengths [2, 3, 5, 8, 12] x 8 seeds x 3 arms = 120 runs; 0 dropped",
+      "length sweep arms=['full_dream', 'long_context', 'no_sleep']"
+    ],
+    "points": [
+      {
+        "acc_by_arm": {
+          "full_dream": [
+            0.75,
+            0.8333333333333333,
+            0.8333333333333333,
+            1.0,
+            0.8333333333333333,
+            0.6666666666666666,
+            0.8333333333333333,
+            0.75
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.75,
+            0.6666666666666666,
+            0.75,
+            0.75,
+            0.8333333333333333,
+            0.8333333333333333,
+            0.6666666666666666,
+            0.6666666666666666
+          ]
+        },
+        "arms": [
+          "full_dream",
+          "long_context",
+          "no_sleep"
+        ],
+        "items_per_task": 40,
+        "memory_vectors_by_arm": {
+          "full_dream": [
+            95.0,
+            93.0,
+            95.0,
+            95.0,
+            97.0,
+            91.0,
+            95.0,
+            92.0
+          ],
+          "long_context": [
+            80.0,
+            80.0,
+            80.0,
+            80.0,
+            80.0,
+            80.0,
+            80.0,
+            80.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "n_tasks": 2,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "total_tokens_by_arm": {
+          "full_dream": [
+            2227.0,
+            1897.0,
+            2104.0,
+            1898.0,
+            2101.0,
+            1820.0,
+            2081.0,
+            1966.0
+          ],
+          "long_context": [
+            537.0,
+            476.0,
+            382.0,
+            441.0,
+            381.0,
+            380.0,
+            381.0,
+            381.0
+          ],
+          "no_sleep": [
+            537.0,
+            476.0,
+            382.0,
+            441.0,
+            381.0,
+            380.0,
+            381.0,
+            381.0
+          ]
+        }
+      },
+      {
+        "acc_by_arm": {
+          "full_dream": [
+            0.611111111111111,
+            0.7777777777777777,
+            0.6666666666666666,
+            0.8888888888888888,
+            0.7777777777777777,
+            0.5555555555555555,
+            0.7222222222222222,
+            0.7222222222222222
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.5,
+            0.6111111111111112,
+            0.5,
+            0.5555555555555555,
+            0.5555555555555555,
+            0.5555555555555555,
+            0.5,
+            0.4444444444444444
+          ]
+        },
+        "arms": [
+          "full_dream",
+          "long_context",
+          "no_sleep"
+        ],
+        "items_per_task": 40,
+        "memory_vectors_by_arm": {
+          "full_dream": [
+            111.0,
+            112.0,
+            114.0,
+            111.0,
+            113.0,
+            108.0,
+            112.0,
+            109.0
+          ],
+          "long_context": [
+            120.0,
+            120.0,
+            120.0,
+            120.0,
+            120.0,
+            120.0,
+            120.0,
+            120.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "n_tasks": 3,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "total_tokens_by_arm": {
+          "full_dream": [
+            3482.0,
+            3180.0,
+            3446.0,
+            3160.0,
+            3354.0,
+            3073.0,
+            3334.0,
+            3219.0
+          ],
+          "long_context": [
+            728.0,
+            667.0,
+            670.0,
+            631.0,
+            571.0,
+            569.0,
+            571.0,
+            571.0
+          ],
+          "no_sleep": [
+            728.0,
+            667.0,
+            664.0,
+            631.0,
+            571.0,
+            569.0,
+            571.0,
+            571.0
+          ]
+        }
+      },
+      {
+        "acc_by_arm": {
+          "full_dream": [
+            0.5666666666666667,
+            0.7666666666666666,
+            0.5666666666666667,
+            0.7333333333333333,
+            0.6666666666666666,
+            0.6,
+            0.6333333333333333,
+            0.6666666666666666
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.3,
+            0.26666666666666666,
+            0.23333333333333334,
+            0.3,
+            0.3,
+            0.3,
+            0.23333333333333334,
+            0.23333333333333334
+          ]
+        },
+        "arms": [
+          "full_dream",
+          "long_context",
+          "no_sleep"
+        ],
+        "items_per_task": 40,
+        "memory_vectors_by_arm": {
+          "full_dream": [
+            147.0,
+            141.0,
+            146.0,
+            145.0,
+            146.0,
+            141.0,
+            143.0,
+            141.0
+          ],
+          "long_context": [
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0,
+            200.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "total_tokens_by_arm": {
+          "full_dream": [
+            6020.0,
+            5612.0,
+            5700.0,
+            5824.0,
+            5874.0,
+            5518.0,
+            5928.0,
+            5813.0
+          ],
+          "long_context": [
+            1110.0,
+            1234.0,
+            1054.0,
+            1206.0,
+            953.0,
+            1141.0,
+            1049.0,
+            1046.0
+          ],
+          "no_sleep": [
+            1110.0,
+            1229.0,
+            1048.0,
+            1193.0,
+            953.0,
+            1123.0,
+            1024.0,
+            1040.0
+          ]
+        }
+      },
+      {
+        "acc_by_arm": {
+          "full_dream": [
+            0.6041666666666666,
+            0.7291666666666666,
+            0.5833333333333334,
+            0.7291666666666666,
+            0.5833333333333334,
+            0.6041666666666666,
+            0.6458333333333334,
+            0.6666666666666666
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.16666666666666666,
+            0.20833333333333331,
+            0.1875,
+            0.20833333333333331,
+            0.16666666666666666,
+            0.14583333333333334,
+            0.1875,
+            0.14583333333333334
+          ]
+        },
+        "arms": [
+          "full_dream",
+          "long_context",
+          "no_sleep"
+        ],
+        "items_per_task": 40,
+        "memory_vectors_by_arm": {
+          "full_dream": [
+            194.0,
+            186.0,
+            190.0,
+            195.0,
+            184.0,
+            186.0,
+            193.0,
+            191.0
+          ],
+          "long_context": [
+            320.0,
+            320.0,
+            320.0,
+            320.0,
+            320.0,
+            320.0,
+            320.0,
+            320.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "n_tasks": 8,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "total_tokens_by_arm": {
+          "full_dream": [
+            9816.0,
+            9140.0,
+            9553.0,
+            9629.0,
+            9117.0,
+            9396.0,
+            9710.0,
+            9519.0
+          ],
+          "long_context": [
+            1680.0,
+            1807.0,
+            1722.0,
+            1775.0,
+            1523.0,
+            1807.0,
+            1620.0,
+            1810.0
+          ],
+          "no_sleep": [
+            1680.0,
+            1802.0,
+            1716.0,
+            1762.0,
+            1523.0,
+            1778.0,
+            1595.0,
+            1804.0
+          ]
+        }
+      },
+      {
+        "acc_by_arm": {
+          "full_dream": [
+            0.5972222222222222,
+            0.6805555555555555,
+            0.5694444444444444,
+            0.638888888888889,
+            0.5694444444444444,
+            0.611111111111111,
+            0.611111111111111,
+            0.6944444444444445
+          ],
+          "long_context": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "no_sleep": [
+            0.1111111111111111,
+            0.13888888888888887,
+            0.125,
+            0.1111111111111111,
+            0.1111111111111111,
+            0.125,
+            0.1527777777777778,
+            0.16666666666666666
+          ]
+        },
+        "arms": [
+          "full_dream",
+          "long_context",
+          "no_sleep"
+        ],
+        "items_per_task": 40,
+        "memory_vectors_by_arm": {
+          "full_dream": [
+            249.0,
+            240.0,
+            249.0,
+            254.0,
+            241.0,
+            242.0,
+            252.0,
+            249.0
+          ],
+          "long_context": [
+            480.0,
+            480.0,
+            480.0,
+            480.0,
+            480.0,
+            480.0,
+            480.0,
+            480.0
+          ],
+          "no_sleep": [
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0,
+            60.0
+          ]
+        },
+        "n_tasks": 12,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "total_tokens_by_arm": {
+          "full_dream": [
+            14660.0,
+            13931.0,
+            14479.0,
+            14783.0,
+            13800.0,
+            13990.0,
+            14416.0,
+            14844.0
+          ],
+          "long_context": [
+            2544.0,
+            2572.0,
+            2677.0,
+            2634.0,
+            2479.0,
+            2667.0,
+            2582.0,
+            2861.0
+          ],
+          "no_sleep": [
+            2519.0,
+            2567.0,
+            2651.0,
+            2621.0,
+            2479.0,
+            2619.0,
+            2533.0,
+            2829.0
+          ]
+        }
+      }
+    ],
+    "treatment_arm": "full_dream"
+  },
+  "manifest_paths": [
+    "phase5/regime_signal_rich/manifest.json",
+    "phase5/regime_balanced/manifest.json",
+    "phase5/regime_distractor_heavy/manifest.json"
+  ],
+  "model_id": "claude-opus-4-8",
+  "model_mocked": true,
+  "retention": {
+    "distractor_heavy": [
+      {
+        "arm_name": "no_sleep",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "replay_only",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "downscale_only",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "random_pruning",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            0.6666666666666666
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            0.3333333333333333
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            0.5
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            0.5
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            0.5
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.5
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.6666666666666666
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.6666666666666666
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "full_dream",
+        "final_row_per_seed": [
+          [
+            0.5,
+            0.3333333333333333,
+            0.5,
+            0.5,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.8333333333333334,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.3333333333333333,
+            0.5,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            1.0,
+            0.6666666666666666,
+            0.5,
+            0.5,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.5,
+            0.5,
+            1.0
+          ],
+          [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.8333333333333334,
+            0.5,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.3333333333333333,
+            0.5,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.5,
+            0.6666666666666666,
+            0.5,
+            0.6666666666666666,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "reflection",
+        "final_row_per_seed": [
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.8333333333333334,
+            0.8333333333333334,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.8333333333333334,
+            0.8333333333333334,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            0.5,
+            0.5,
+            0.8333333333333334,
+            0.8333333333333334,
+            1.0
+          ],
+          [
+            0.8333333333333334,
+            0.5,
+            0.5,
+            1.0,
+            1.0
+          ],
+          [
+            0.5,
+            0.6666666666666666,
+            0.8333333333333334,
+            0.6666666666666666,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.8333333333333334,
+            1.0
+          ],
+          [
+            0.6666666666666666,
+            0.6666666666666666,
+            0.6666666666666666,
+            0.8333333333333334,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "oracle",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.5,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.5,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.3333333333333333,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.5,
+            1.0,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "long_context",
+        "final_row_per_seed": [
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "arm_name": "aa",
+        "final_row_per_seed": [
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.3333333333333333,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.16666666666666666,
+            1.0
+          ]
+        ],
+        "n_tasks": 5,
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "scenario": "task-incremental",
+  "sim_real": {
+    "arms": [
+      {
+        "acc_real_per_seed": [
+          0.5972222222222222,
+          0.6805555555555555,
+          0.5694444444444444,
+          0.638888888888889,
+          0.5694444444444444,
+          0.611111111111111,
+          0.611111111111111,
+          0.6944444444444445
+        ],
+        "acc_sim_per_seed": [
+          0.611111111111111,
+          0.7777777777777777,
+          0.6666666666666666,
+          0.8888888888888888,
+          0.7777777777777777,
+          0.5555555555555555,
+          0.7222222222222222,
+          0.7222222222222222
+        ],
+        "arm_name": "full_dream",
+        "retention_real": {
+          "arm_name": "full_dream",
+          "final_row_per_seed": [
+            [
+              0.5,
+              0.3333333333333333,
+              0.5,
+              0.5,
+              0.6666666666666666,
+              0.5,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.6666666666666666,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.6666666666666666,
+              0.3333333333333333,
+              0.6666666666666666,
+              1.0,
+              0.5,
+              0.6666666666666666,
+              0.5,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.3333333333333333,
+              0.5,
+              0.3333333333333333,
+              0.6666666666666666,
+              0.3333333333333333,
+              0.8333333333333334,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.3333333333333333,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              1.0,
+              0.6666666666666666,
+              0.5,
+              0.5,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.16666666666666666,
+              0.5,
+              0.5,
+              0.8333333333333334,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.6666666666666666,
+              0.5,
+              0.5,
+              0.3333333333333333,
+              0.5,
+              0.5,
+              0.3333333333333333,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.5,
+              1.0
+            ],
+            [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.8333333333333334,
+              0.5,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.3333333333333333,
+              0.8333333333333334,
+              0.5,
+              0.5,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.3333333333333333,
+              0.5,
+              0.6666666666666666,
+              0.5,
+              0.8333333333333334,
+              0.6666666666666666,
+              0.5,
+              0.3333333333333333,
+              0.6666666666666666,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.5,
+              0.6666666666666666,
+              0.5,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.5,
+              0.6666666666666666,
+              0.6666666666666666,
+              0.8333333333333334,
+              0.8333333333333334,
+              1.0
+            ]
+          ],
+          "n_tasks": 12,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "retention_sim": {
+          "arm_name": "full_dream",
+          "final_row_per_seed": [
+            [
+              0.5,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              1.0,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.3333333333333333,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.6666666666666666,
+              0.5,
+              1.0
+            ],
+            [
+              0.5,
+              0.6666666666666666,
+              1.0
+            ]
+          ],
+          "n_tasks": 3,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      },
+      {
+        "acc_real_per_seed": [
+          0.1111111111111111,
+          0.13888888888888887,
+          0.125,
+          0.1111111111111111,
+          0.1111111111111111,
+          0.125,
+          0.1527777777777778,
+          0.16666666666666666
+        ],
+        "acc_sim_per_seed": [
+          0.5,
+          0.6111111111111112,
+          0.5,
+          0.5555555555555555,
+          0.5555555555555555,
+          0.5555555555555555,
+          0.5,
+          0.4444444444444444
+        ],
+        "arm_name": "no_sleep",
+        "retention_real": {
+          "arm_name": "no_sleep",
+          "final_row_per_seed": [
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.3333333333333333,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.8333333333333334,
+              1.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0
+            ]
+          ],
+          "n_tasks": 12,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "retention_sim": {
+          "arm_name": "no_sleep",
+          "final_row_per_seed": [
+            [
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.8333333333333334,
+              1.0
+            ],
+            [
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.0,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.0,
+              0.6666666666666666,
+              1.0
+            ],
+            [
+              0.0,
+              0.5,
+              1.0
+            ],
+            [
+              0.0,
+              0.3333333333333333,
+              1.0
+            ]
+          ],
+          "n_tasks": 3,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      },
+      {
+        "acc_real_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "acc_sim_per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "arm_name": "long_context",
+        "retention_real": {
+          "arm_name": "long_context",
+          "final_row_per_seed": [
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ]
+          ],
+          "n_tasks": 12,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "retention_sim": {
+          "arm_name": "long_context",
+          "final_row_per_seed": [
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ],
+            [
+              1.0,
+              1.0,
+              1.0
+            ]
+          ],
+          "n_tasks": 3,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      }
+    ],
+    "inversions": [],
+    "max_abs_acc_divergence": 0.39756944444444436,
+    "note": "sim preserves the real arm ranking (no inversions); pearson=0.981, spearman=1.000, max|mean ACC sim-real|=0.398",
+    "pearson_agreement": 0.981418429898068,
+    "ranking_preserved": true,
+    "real_compression": 1.0,
+    "real_n_tasks": 12,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "sim_compression": 60.0,
+    "sim_n_tasks": 3,
+    "spearman_agreement": 1.0
+  }
+}
