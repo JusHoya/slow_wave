@@ -585,7 +585,7 @@ def _compute_negative(
         # PATTERN is still observed (e.g. no long-context crossover ⇒ the
         # "Long-context wins" form). Surface it honestly instead of claiming
         # nothing matched — it is a secondary cost/length trade-off, not a
-        # refutation of the matched-budget primary contrast (DX2/DX5).
+        # refutation of the primary-endpoint contrast (DX2/DX5).
         forms_str = "; ".join(repr(f) for f in matched)
         note = (
             sec_note
@@ -593,7 +593,9 @@ def _compute_negative(
             "and the registered secondary contrast is positive. However, the following "
             f"preregistered negative pattern(s) ARE observed and reported (see the "
             f"crossover / EC6 section): {forms_str}. These concern secondary cost/length "
-            "trade-offs, not the matched-budget primary contrast."
+            "trade-offs, not the primary-endpoint contrast (reported on the "
+            "accuracy-vs-compute Pareto frontier, since budgets were not matched "
+            "within tolerance)."
         )
     else:
         note = (

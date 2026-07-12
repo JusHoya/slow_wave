@@ -20,7 +20,10 @@ counterfactual). Conflict/unlearning off; sleep every $1$ task; sleep-pressure
 mode \emph{fixed}.
 
 \paragraph{Evaluation.} Nine arms (Section~\ref{sec:protocol}); seeds
-$\{0,\dots,7\}$ ($n=\SWnSeeds$); matched budget on with tolerance $0.15$;
+$\{0,\dots,7\}$ ($n=\SWnSeeds$); matched-budget controller enabled with tolerance
+$0.15$ (the realised grid is out of tolerance for \texttt{full\_dream}, so
+\texttt{budget\_matched} is false and the accuracy-vs-compute Pareto frontier is
+the operative artifact; Section~\ref{sec:results});
 $10{,}000$ bootstrap resamples at the $0.95$ CI level; stats seed $0$; stability
 repeats $3$; drift rounds $3$; A/A reference arm \texttt{no\_sleep}; treatment
 \texttt{full\_dream}; baseline \texttt{no\_sleep}; primary endpoint
@@ -61,4 +64,10 @@ agent \emph{reasoning} prompt is \texttt{"Review the recent observations and not
 any facts worth remembering."} (optionally suffixed with retrieved memory
 context); this call is for telemetry/realism only --- probe answers are read
 deterministically from memory by exact-key lookup, never from the LLM, which is
-what keeps the mock-LLM pipeline byte-reproducible.
+what keeps the mock-LLM pipeline byte-reproducible. A direct consequence is that
+any arm retaining a probed key answers it correctly regardless of model behaviour:
+\texttt{long\_context} (unbounded episodic capacity) keeps every key and so attains
+the maximum possible final accuracy by construction (Table~\ref{tab:arms}), and the
+consolidation arms affect accuracy solely through what they retain --- so the
+continual-learning scores here measure a retention policy, not probe-time reasoning
+(Section~\ref{sec:limitations}).

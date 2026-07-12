@@ -1,0 +1,31 @@
+# Citation metadata. Mirrors the BibTeX block in README.md ("How to cite");
+# edits here must be mirrored there.
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+title: "Slow Wave: a mechanism-decomposed test bench for sleep-inspired memory consolidation in continual-learning LLM agents"
+version: 0.1.0
+date-released: 2026-07-12
+license: Apache-2.0
+url: "https://github.com/JusHoya/slow_wave"
+repository-code: "https://github.com/JusHoya/slow_wave"
+abstract: >-
+  A reproducible research test bench for sleep-inspired memory consolidation
+  in frozen-weights LLM agents: a synthetic continual task stream with
+  ground-truth relevance labels, a dual-store (episodic/semantic/archival)
+  memory substrate, a four-operator dream engine (replay, transfer, downscale,
+  generative-augment), and a nine-arm preregistered control battery whose
+  every figure and number regenerates from committed data in one command.
+authors:
+  - family-names: Hoyer
+    given-names: Melvin
+    name-suffix: III
+keywords:
+  - memory consolidation
+  - continual learning
+  - LLM agents
+  - sleep
+  - experience replay
+  - catastrophic forgetting
+  - preregistration
+  - reproducibility
