@@ -147,7 +147,7 @@ Slow Wave is one instrument pointed at one corner of a much larger question: **h
 - **Attack the preregistration.** H1, H0, the rejection criteria, and six pre-specified negative-result forms are committed. Refuting the confirmed endpoint in a regime the sweep did not cover is a welcome contribution, not a threat.
 - **Swap the world.** The synthetic fact-world is one stream generator behind a contract — port a stream from your own domain and keep the entire instrument, ground-truth grading included.
 
-Open a [GitHub issue](https://github.com/JusHoya/slow_wave/issues) to start a thread — anything from a five-minute question to a co-authored follow-up study is in scope.
+Open a [GitHub issue](https://github.com/JusHoya/slow_wave/issues) to start a thread, or reach out directly on [LinkedIn](https://www.linkedin.com/in/melvinahoyeriii/) — anything from a five-minute question to a co-authored follow-up study is in scope.
 
 ## How to cite
 
