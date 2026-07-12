@@ -7,6 +7,7 @@ name = "slow-wave"
 dynamic = ["version"]
 description = "A test bench for sleep-inspired memory consolidation in autonomous AI agents."
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.11"
 keywords = [
     "memory-consolidation",
